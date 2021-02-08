@@ -55,4 +55,18 @@ defmodule SampleTest do
       end
     end
   end
+
+  describe "Table test with List (and title)" do
+    tests = [
+      ["case1", 1, 2, 3],
+      ["case2", 1, -1, 0]
+    ]
+
+    for [title | t] <- tests do
+      @tag t: t
+      test title, %{t: [a, b, expected]} do
+        assert Sample.sum(a, b) == expected
+      end
+    end
+  end
 end
