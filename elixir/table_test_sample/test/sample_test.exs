@@ -2,49 +2,57 @@ defmodule SampleTest do
   use ExUnit.Case
   doctest Sample
 
-  describe "Table test with Map" do
+  test "Table test with Map" do
     tests = [
       %{
-        title: "case 1",
         a: 1,
         b: 2,
         expected: 3
       },
       %{
-        title: "case 2",
         a: 1,
         b: -1,
         expected: 0
       }
     ]
 
-    Enum.each(tests, fn t ->
-      @title t.title
-      @a t.a
-      @b t.b
-      @expected t.expected
-
-      test @title do
-        assert Sample.sum(@a, @b) == @expected
-      end
-    end)
+    for t <- tests do
+      assert Sample.sum(t.a, t.b) == t.expected
+    end
   end
 
-  describe "Table test with List" do
+  test "Table test with List" do
     tests = [
-      ["case 1", 1, 2, 3],
-      ["case 2", 1, -1, 0]
+      [1, 2, 3],
+      [1, -1, 0]
     ]
 
-    Enum.each(tests, fn [title, a, b, expected] ->
-      @title title
-      @a a
-      @b b
-      @expected expected
+    for [a, b, expected] <- tests do
+      assert Sample.sum(a, b) == expected
+    end
+  end
 
-      test @title do
-        assert Sample.sum(@a, @b) == @expected
+  describe "Table test with Map (and title)" do
+    tests = [
+      %{
+        title: "case1",
+        a: 1,
+        b: 2,
+        expected: 3
+      },
+      %{
+        title: "case2",
+        a: 1,
+        b: -1,
+        expected: 0
+      }
+    ]
+
+    for t <- tests do
+      @tag t: t
+      test t.title, %{t: t} do
+        assert Sample.sum(t.a, t.b) == t.expected
       end
-    end)
+    end
   end
 end
