@@ -35,9 +35,9 @@ defmodule MyList do
       [ id: 130, ship_to: :NC, net_amount: 50.00 ],
     ]
 
-    for order = [{ :id, _id }, { :ship_to, ship_to }, { :net_amount, net_amount }] <- orders do
+    for order = [id: _id, ship_to: ship_to, net_amount: net_amount] <- orders do
       tax_rate = Keyword.get(tax_rates, ship_to, 0)
-      [{:total_amount, net_amount + (net_amount * tax_rate)} | order]
+      Keyword.put(order, :total_amount, net_amount + (net_amount * tax_rate))
     end
   end
 end
