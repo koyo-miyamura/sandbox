@@ -24,3 +24,5 @@ defmodule Token do
     end
   end
 end
+
+Token.run
