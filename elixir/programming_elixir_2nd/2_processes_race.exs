@@ -25,4 +25,6 @@ defmodule Token do
   end
 end
 
+IO.puts "Start"
 Token.run
+IO.puts "Done"
