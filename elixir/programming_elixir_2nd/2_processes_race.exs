@@ -1,4 +1,6 @@
 defmodule Token do
+  require Logger
+
   def token_receiver() do
     receive do
       { pid, token } ->
@@ -8,10 +10,12 @@ defmodule Token do
   end
 
   def run() do
+    Logger.info("Start running ...")
     pid = spawn(Token, :token_receiver, [])
     send pid, { self(), "fred" }
     send pid, { self(), "betty" }
     received()
+    Logger.info("Finish")
   end
 
   def received() do
