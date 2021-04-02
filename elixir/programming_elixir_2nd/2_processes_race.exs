@@ -10,12 +10,16 @@ defmodule Token do
   end
 
   def run() do
-    Logger.info("Start running ...")
+    start_log()
+
     pid = spawn(Token, :token_receiver, [])
-    send pid, { self(), "fred" }
-    send pid, { self(), "betty" }
+    for name <- ["fred", "betty"] do
+      send pid, { self(), name }
+    end
+
     received()
-    Logger.info("Finish")
+
+    finish_log()
   end
 
   def received() do
@@ -27,6 +31,9 @@ defmodule Token do
         "Done"
     end
   end
+
+  defp start_log(), do: Logger.info("Start running ...")
+  defp finish_log(), do: Logger.info("Finish")
 end
 
 IO.puts "Start"
