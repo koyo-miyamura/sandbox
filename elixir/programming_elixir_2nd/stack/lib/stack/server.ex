@@ -1,4 +1,4 @@
-defmodule Stack do
+defmodule Stack.Server do
   use GenServer
 
   def init(stack) do
