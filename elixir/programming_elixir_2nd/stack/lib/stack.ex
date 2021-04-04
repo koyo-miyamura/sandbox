@@ -1,8 +1,8 @@
 defmodule Stack do
   @server Stack.Server
 
-  def start_link(init_stack) do
-    @server.start_link(init_stack)
+  def start_link() do
+    @server.start_link(nil)
   end
 
   def pop() do
