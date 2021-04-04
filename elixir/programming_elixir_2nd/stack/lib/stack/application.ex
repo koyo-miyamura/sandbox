@@ -6,7 +6,7 @@ defmodule Stack.Application do
   @impl true
   def start(_type, _args) do
     children = [
-      {Stack.Stash, [1, 2]},
+      {Stack.Stash, []},
       {Stack.Server, nil}
     ]
 
