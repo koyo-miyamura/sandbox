@@ -12,4 +12,8 @@ defmodule Stack do
   def push(value) do
     GenServer.cast(@server, {:push, value})
   end
+
+  def show() do
+    GenServer.call(@server, :show)
+  end
 end
