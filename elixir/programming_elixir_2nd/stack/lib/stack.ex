@@ -2,7 +2,7 @@ defmodule Stack do
   @server Stack.Server
 
   def start_link(init_stack) do
-    GenServer.start_link(@server, init_stack, name: @server)
+    @server.start_link(init_stack)
   end
 
   def pop() do

@@ -2,6 +2,10 @@ defmodule Stack.Server do
   use GenServer
   alias Stack.Impl
 
+  def start_link(init_stack) do
+    GenServer.start_link(__MODULE__, init_stack, name: __MODULE__)
+  end
+
   def init(stack) do
     {:ok, stack}
   end
