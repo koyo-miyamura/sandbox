@@ -1,6 +1,6 @@
 defmodule M do
   @doc """
-    Descriptions.
+    Map with reduce.
 
   ## Examples
     iex> M.do_add_words(["aa", "bb", "hoge"], %{})
