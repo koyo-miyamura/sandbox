@@ -7,7 +7,7 @@ $ make init
 $ docker run --rm -v $(pwd):/app:cached -t myrailsapp bundle exec rails new myapp
 ```
 
-その後以下のように Webpacker 入れたりテンプレートファイルをコピーしてあげてください
+その後以下のように必要に応じて Webpacker 入れたりテンプレートファイルをコピーしてあげてください
 
 ```bash
 $ cp Makefile Dockerfile docker-compose.yml myapp
