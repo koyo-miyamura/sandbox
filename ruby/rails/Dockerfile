@@ -26,5 +26,8 @@ WORKDIR /app
 
 RUN bundle config set path vendor/bundle
 
+# 独自に追加
+EXPOSE 3000
+
 #実行時にコマンド指定が無い場合に実行されるコマンド
 CMD ["bash"]
