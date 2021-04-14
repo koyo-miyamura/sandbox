@@ -14,3 +14,10 @@ $ cp Makefile Dockerfile docker-compose.yml myapp
 $ cd myapp
 $ docker run --rm -v $(pwd):/app:cached -t myrailsapp bundle exec rails webpacker:install
 ```
+
+作成したディレクトリでコンテナ立ち上げると Rails サーバが立ち上がります
+あとは MySQL 入れるなり Nginx 入れるなりお好きにカスタマイズして見てね
+
+```bash
+$ make up
+```
