@@ -3,8 +3,10 @@ APP_ROOT=$(abspath ./)
 build:
 	docker build -t myrailsapp .
 
-init: build
+install:
 	docker run --rm -v $(APP_ROOT):/app:cached -t myrailsapp bundle install
+
+init: build install
 
 enter:
 	docker-compose exec webapp bundle exec bash
