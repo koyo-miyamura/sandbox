@@ -10,7 +10,7 @@ $ docker run --rm -v $(pwd):/app:cached -t myrailsapp bundle exec rails new myap
 その後以下のように必要に応じて Webpacker 入れたりテンプレートファイルをコピーしてあげてください
 
 ```bash
-$ cp Makefile Dockerfile docker-compose.yml myapp
+$ cp Makefile Dockerfile docker-compose.yml .rubocop.yml myapp
 $ cd myapp
 $ docker run --rm -v $(pwd):/app:cached -t myrailsapp bundle exec rails webpacker:install
 ```
