@@ -1,0 +1,15 @@
+current directory: /app/awesome_events/vendor/bundle/ruby/2.6.0/gems/websocket-driver-0.7.3/ext/websocket-driver
+/usr/local/bin/ruby -I /usr/local/lib/ruby/2.6.0 -r ./siteconf20210424-10-1d6l81i.rb extconf.rb
+creating Makefile
+
+current directory: /app/awesome_events/vendor/bundle/ruby/2.6.0/gems/websocket-driver-0.7.3/ext/websocket-driver
+make "DESTDIR=" clean
+
+current directory: /app/awesome_events/vendor/bundle/ruby/2.6.0/gems/websocket-driver-0.7.3/ext/websocket-driver
+make "DESTDIR="
+compiling websocket_mask.c
+linking shared-object websocket_mask.so
+
+current directory: /app/awesome_events/vendor/bundle/ruby/2.6.0/gems/websocket-driver-0.7.3/ext/websocket-driver
+make "DESTDIR=" install
+/usr/bin/install -c -m 0755 websocket_mask.so ./.gem.20210424-10-1cwcudo
