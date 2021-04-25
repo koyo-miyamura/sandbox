@@ -34,3 +34,9 @@ Metrics/MethodLength:
   Max: 20
   Exclude:
     - "db/migrate/*.rb"
+
+Style/GuardClause:
+  Enabled: false
+
+Style/IfUnlessModifier:
+  Enabled: false
