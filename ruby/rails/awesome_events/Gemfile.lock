@@ -79,6 +79,11 @@ GEM
     concurrent-ruby (1.1.8)
     crass (1.0.6)
     erubi (1.10.0)
+    factory_bot (6.1.0)
+      activesupport (>= 5.0.0)
+    factory_bot_rails (6.1.0)
+      factory_bot (~> 6.1.0)
+      railties (>= 5.0.0)
     faraday (1.4.1)
       faraday-excon (~> 1.1)
       faraday-net_http (~> 1.0)
@@ -249,6 +254,7 @@ DEPENDENCIES
   bootsnap (>= 1.4.4)
   byebug
   capybara (>= 3.26)
+  factory_bot_rails
   hamlit-rails (~> 0.2.3)
   jbuilder (~> 2.7)
   listen (~> 3.3)
