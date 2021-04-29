@@ -5,9 +5,3 @@ one:
   uid: MyString
   name: MyString
   image_url: MyString
-
-two:
-  provider: MyString
-  uid: MyString
-  name: MyString
-  image_url: MyString
