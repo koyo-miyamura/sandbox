@@ -24,15 +24,18 @@ class EventsController < ApplicationController
   end
 
   def update
-    @event = current_user.created_events.find(params[:id])
-    if @event.update(event_params)
-      redirect_to @event, notice: '更新しました'
+    event = current_user.created_events.find(params[:id])
+    event.with_lock do
+      event.update!(event_params)
     end
+    redirect_to event, notice: '更新しました'
   end
 
   def destroy
-    @event = current_user.created_events.find(params[:id])
-    @event.destroy!
+    event = current_user.created_events.find(params[:id])
+    event.with_lock do
+      event.destroy!
+    end
     redirect_to root_path, notice: '削除しました'
   end
 
