@@ -14,3 +14,7 @@ module ActiveSupport
     # Add more helper methods to be used by all tests here...
   end
 end
+
+if ENV['QUERY_LOG'].present?
+  ActiveRecord::Base.logger = ActiveSupport::Logger.new($stdout)
+end
