@@ -30,7 +30,7 @@ RUN bundle config set path vendor/bundle
 EXPOSE 3000
 
 # system テスト時に必要
-RUN apt-get install -y chromium-driver
+RUN apt-get update && apt-get install -y chromium-driver
 
 #実行時にコマンド指定が無い場合に実行されるコマンド
 CMD ["bash"]
