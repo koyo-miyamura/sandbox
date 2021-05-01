@@ -37,8 +37,6 @@ class Event < ApplicationRecord
   end
 
   def remove_image_if_user_accept
-    byebug
-
     self.image = nil if ActiveRecord::Type::Boolean.new.cast(remove_image)
   end
 end
