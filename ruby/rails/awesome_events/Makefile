@@ -1,5 +1,7 @@
 APP_ROOT=$(abspath ./)
 
+.PHONY: build install init enter up restart stop down logs mysql
+
 build:
 	docker build -t myrailsapp .
 
@@ -25,3 +27,6 @@ down:
 
 logs:
 	docker-compose logs -f --tail=100
+
+mysql:
+	docker-compose exec mysql mysql -uroot -proot app_dev
