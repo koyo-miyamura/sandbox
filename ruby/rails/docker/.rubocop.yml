@@ -10,9 +10,16 @@ AllCops:
     - "node_modules/**/*"
     - "tmp/**/*"
     - "lib/**/*"
+    - "db/migrate/**/*"
   DisplayCopNames: true
   TargetRubyVersion: 2.6
   NewCops: enable
+
+Rails:
+  Enabled: true
+  Exclude:
+    - app/values/**/*
+    - test/values/**/*
 
 # 日本語のコメントを許可する
 Style/AsciiComments:
