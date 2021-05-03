@@ -6,9 +6,8 @@ class EventsController < ApplicationController
   end
 
   def create
-    @event = current_user.created_events.build(event_params)
-
-    if @event.save
+    @event = Events::CreateService.call(current_user, event_params)
+    if @event.errors.empty?
       redirect_to @event, notice: '作成しました'
     end
   end

@@ -47,3 +47,6 @@ Style/GuardClause:
 
 Style/IfUnlessModifier:
   Enabled: false
+
+Lint/MissingSuper:
+  Enabled: false
