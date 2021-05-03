@@ -2,6 +2,8 @@ version: "3"
 services:
   webapp:
     image: myrailsapp
+    # depends_on:
+    #   - mysql
     stdin_open: true
     tty: true
     ports:
@@ -12,4 +14,16 @@ services:
       - /tmp
     command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails s -b 0.0.0.0"
     environment:
-      - "LANG=en_US.UTF-8"
+        LANG: en_US.UTF-8
+    #   MYSQL_PASSWORD: root
+    #   MYSQL_HOST: mysql
+  # mysql:
+  #   image: mysql:5.7
+  #   environment:
+  #     MYSQL_ROOT_PASSWORD: root
+  #     TZ: Asia/Tokyo
+  #     LANG: en_US.UTF-8
+  #   volumes:
+  #     - "./mysql/data:/var/lib/mysql:cached"
+  #   ports:
+  #     - "3306:3306"
