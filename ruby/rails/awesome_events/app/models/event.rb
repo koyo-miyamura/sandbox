@@ -14,7 +14,7 @@ class Event < ApplicationRecord
   validates :content, length: { maximum: Constants::EVENT_MAX_CONTENT_COLUMN_LENGTH }, presence: true
   validates_with PeriodValidator
 
-  scope :future_events, -> { where('start_at > ?', Time.zone.now) }
+  scope :future_events, FutureEventsQuery
 
   def created_by?(user)
     return false unless user
