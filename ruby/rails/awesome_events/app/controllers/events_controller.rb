@@ -54,7 +54,7 @@ class EventsController < ApplicationController
   end
 
   def event_params
-    permit_params.reject { |k, _v| k == 'remove_image' }
+    permit_params.reject { |k, _v| k == 'remove_image' }.to_hash
   end
 
   def remove_image?

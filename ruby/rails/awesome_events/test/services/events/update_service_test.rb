@@ -4,7 +4,7 @@ class EventsUpdateServiceTest < ActiveSupport::TestCase
   setup do
     @user = FactoryBot.create(:user)
     @event = FactoryBot.create(:event, id: 1000, owner: @user)
-    @event_params = ActionController::Parameters.new
+    @event_params = {}
   end
 
   test 'update' do
