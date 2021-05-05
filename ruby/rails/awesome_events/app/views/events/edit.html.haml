@@ -2,7 +2,7 @@
 
 %h1.mt-2 イベント情報編集
 
-= form_with(model: @event, class: "form-horizontal") do |f|
+= form_with(model: @event, class: "form-horizontal", local: false) do |f|
   #errors
   .form-group
     = f.label :name

@@ -8,10 +8,18 @@ class EventsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test '更新' do
-    put event_url(@event), params: { event: { name: 'koyo' } }
+    updated_name = 'k' * Constants::EVENT_MAX_NAME_COLUMN_LENGTH
+    put event_url(@event), params: { event: { name: updated_name } }, xhr: true
 
     @event.reload
-    assert_equal('koyo', @event.name)
+    assert flash[:notice]
+    assert_equal(updated_name, @event.name)
+  end
+
+  test '更新失敗' do
+    assert_no_changes :@event do
+      put event_url(@event), params: { event: { name: 'k' * (Constants::EVENT_MAX_NAME_COLUMN_LENGTH + 1) } }, xhr: true
+    end
   end
 
   test '自分がつくったイベントは削除できる' do

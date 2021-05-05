@@ -9,9 +9,9 @@ class Event < ApplicationRecord
             content_type: %i[png jpg jpeg],
             size: { less_than_or_equal_to: 10.megabytes },
             dimension: { width: { max: 2000 }, height: { max: 2000 } }
-  validates :name, length: { maximum: 50 }, presence: true
-  validates :place, length: { maximum: 100 }, presence: true
-  validates :content, length: { maximum: 2000 }, presence: true
+  validates :name, length: { maximum: Constants::EVENT_MAX_NAME_COLUMN_LENGTH }, presence: true
+  validates :place, length: { maximum: Constants::EVENT_MAX_PLACE_COLUMN_LENGTH }, presence: true
+  validates :content, length: { maximum: Constants::EVENT_MAX_CONTENT_COLUMN_LENGTH }, presence: true
   validates_with PeriodValidator
 
   attr_accessor :remove_image
