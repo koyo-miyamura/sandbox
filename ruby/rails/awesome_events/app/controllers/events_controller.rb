@@ -38,10 +38,11 @@ class EventsController < ApplicationController
   end
 
   def destroy
-    event = current_user.created_events.find(params[:id])
-    event.with_lock do
-      event.destroy!
-    end
+    Events::DeleteService.call(
+      user: current_user,
+      event_id: params[:id]
+    )
+
     redirect_to root_path, notice: '削除しました'
   end
 
