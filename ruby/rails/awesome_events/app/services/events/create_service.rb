@@ -1,6 +1,6 @@
 module Events
   class CreateService < BaseService
-    def initialize(user, event_params)
+    def initialize(user:, event_params:)
       @user = user
       @event_params = event_params
     end

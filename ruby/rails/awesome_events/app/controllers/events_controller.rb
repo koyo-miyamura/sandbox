@@ -6,7 +6,10 @@ class EventsController < ApplicationController
   end
 
   def create
-    @event = Events::CreateService.call(current_user, event_params)
+    @event = Events::CreateService.call(
+      user: current_user,
+      event_params: event_params
+    )
     if @event.errors.empty?
       redirect_to @event, notice: '作成しました'
     end
@@ -23,11 +26,14 @@ class EventsController < ApplicationController
   end
 
   def update
-    event = current_user.created_events.find(params[:id])
-    event.with_lock do
-      event.update!(event_params)
+    @event = Events::UpdateService.call(
+      user: current_user,
+      event_id: params[:id],
+      event_params: event_params
+    )
+    if @event.errors.empty?
+      redirect_to @event, notice: '更新しました'
     end
-    redirect_to event, notice: '更新しました'
   end
 
   def destroy
