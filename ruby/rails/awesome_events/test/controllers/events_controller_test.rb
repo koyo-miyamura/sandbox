@@ -11,8 +11,9 @@ class EventsControllerTest < ActionDispatch::IntegrationTest
     updated_name = 'k' * Constants::EVENT_MAX_NAME_COLUMN_LENGTH
     put event_url(@event), params: { event: { name: updated_name } }, xhr: true
 
-    @event.reload
     assert flash[:notice]
+
+    @event.reload
     assert_equal(updated_name, @event.name)
   end
 
@@ -21,7 +22,8 @@ class EventsControllerTest < ActionDispatch::IntegrationTest
 
     assert flash[:notice]
 
-    assert_nil @event.image.attached
+    @event.reload
+    assert_not @event.image.attached?
   end
 
   test '更新失敗' do

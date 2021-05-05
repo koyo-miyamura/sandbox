@@ -6,5 +6,8 @@ FactoryBot.define do
     sequence(:content) { |i| "イベント本文#{i}" }
     start_at { rand(1..30).days.from_now }
     end_at { start_at + rand(1..30).hours }
+    after(:build) do |event|
+      event.image.attach(io: File.open('test/factories/dummy.jpg'), filename: 'dummy.jpg')
+    end
   end
 end
