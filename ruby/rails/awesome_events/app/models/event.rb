@@ -14,21 +14,11 @@ class Event < ApplicationRecord
   validates :content, length: { maximum: Constants::EVENT_MAX_CONTENT_COLUMN_LENGTH }, presence: true
   validates_with PeriodValidator
 
-  attr_accessor :remove_image
-
-  before_save :remove_image_if_user_accept
-
   scope :future_events, -> { where('start_at > ?', Time.zone.now) }
 
   def created_by?(user)
     return false unless user
 
     self.owner_id == user.id
-  end
-
-  private
-
-  def remove_image_if_user_accept
-    self.image = nil if ActiveRecord::Type::Boolean.new.cast(remove_image)
   end
 end

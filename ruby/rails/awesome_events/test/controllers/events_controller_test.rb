@@ -16,6 +16,14 @@ class EventsControllerTest < ActionDispatch::IntegrationTest
     assert_equal(updated_name, @event.name)
   end
 
+  test '更新: remove_image が送信されたら画像が消える' do
+    put event_url(@event), params: { event: { remove_image: '1' } }, xhr: true
+
+    assert flash[:notice]
+
+    assert_nil @event.image.attached
+  end
+
   test '更新失敗' do
     assert_no_changes :@event do
       put event_url(@event), params: { event: { name: 'k' * (Constants::EVENT_MAX_NAME_COLUMN_LENGTH + 1) } }, xhr: true
