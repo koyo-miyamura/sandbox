@@ -1,9 +1,10 @@
 module Events
   class UpdateService < BaseService
-    def initialize(user:, event_id:, event_params:)
-      @user         = user
-      @event_id     = event_id
-      @event_params = event_params
+    def initialize(user:, event_id:, event_params:, is_remove_image:)
+      @user            = user
+      @event_id        = event_id
+      @event_params    = event_params
+      @is_remove_image = is_remove_image
     end
 
     def call
@@ -11,24 +12,14 @@ module Events
 
       begin
         event.with_lock do
-          event.image = nil if delete_image?
-          event.update!(update_event_columns)
+          event.image = nil if @is_remove_image
+          event.update!(@event_params)
         end
       rescue ActiveRecord::RecordInvalid => e
         event = e.record
       end
 
       event
-    end
-
-    private
-
-    def delete_image?
-      ActiveRecord::Type::Boolean.new.cast(@event_params[:remove_image])
-    end
-
-    def update_event_columns
-      @event_params.reject { |k, _v| k == 'remove_image' }
     end
   end
 end

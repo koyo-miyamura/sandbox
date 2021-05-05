@@ -29,7 +29,8 @@ class EventsController < ApplicationController
     @event = Events::UpdateService.call(
       user: current_user,
       event_id: params[:id],
-      event_params: event_params
+      event_params: event_params,
+      is_remove_image: remove_image?
     )
     if @event.errors.empty?
       redirect_to @event, notice: '更新しました'
@@ -46,9 +47,17 @@ class EventsController < ApplicationController
 
   private
 
-  def event_params
+  def permit_params
     params.require(:event).permit(
       :name, :place, :image, :remove_image, :content, :start_at, :end_at
     )
+  end
+
+  def event_params
+    permit_params.reject { |k, _v| k == 'remove_image' }
+  end
+
+  def remove_image?
+    ActiveRecord::Type::Boolean.new.cast(permit_params[:remove_image])
   end
 end
