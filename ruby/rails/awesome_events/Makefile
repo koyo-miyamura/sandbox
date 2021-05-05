@@ -36,3 +36,5 @@ test:
 
 test_system:
 	docker-compose exec webapp bundle exec rails test:system
+
+test_all: test test_system
