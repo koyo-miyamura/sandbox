@@ -1,6 +1,6 @@
 APP_ROOT=$(abspath ./)
 
-.PHONY: build install init enter up restart stop down logs mysql test test_system
+.PHONY: build install init enter up restart stop down logs mysql test test_system test_all
 
 build:
 	docker build -t myrailsapp .
@@ -36,3 +36,5 @@ test:
 
 test_system:
 	docker-compose exec webapp bundle exec rails test:system
+
+test_all: test test_system

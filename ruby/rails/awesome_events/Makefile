@@ -1,6 +1,6 @@
 APP_ROOT=$(abspath ./)
 
-.PHONY: build install init enter up restart stop down logs mysql test test_system
+.PHONY: build install init enter up restart stop down logs mysql test test_system test_all
 
 build:
 	docker build -t myrailsapp .
