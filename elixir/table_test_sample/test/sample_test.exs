@@ -1,6 +1,5 @@
 defmodule SampleTest do
   use ExUnit.Case
-  doctest Sample
 
   test "Table test with Map" do
     tests = [
