@@ -30,7 +30,6 @@ defmodule ShotrizeWeb do
   def view do
     quote do
       use Phoenix.View,
-        pattern: "**/*",
         root: "lib/auth_sample_web/templates",
         namespace: ShotrizeWeb
 
