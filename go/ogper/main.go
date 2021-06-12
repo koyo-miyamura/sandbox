@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -32,7 +33,7 @@ type Meta struct {
 func main() {
 	var (
 		ctx = context.Background()
-		url = "https://example.com"
+		url = "https://github.com/koyo-miyamura"
 	)
 
 	req, err := http.NewRequest(http.MethodGet, url, nil)
@@ -56,42 +57,55 @@ func main() {
 		log.Println(err)
 	}
 
-	metaNodes := walk(node, make(map[string][]*html.Node))
+	og := &OgpContent{}
+	og.walk(node)
 
-	result := &OgpContent{}
-	for _, meta := range metaNodes["meta"] {
-		for _, attr := range meta.Attr {
-			switch attr.Val {
+	result, err := json.Marshal(og)
+	if err != nil {
+		log.Panicln(err)
+	}
+
+	fmt.Printf("%+v\n", string(result))
+}
+
+func (og *OgpContent) walk(node *html.Node) {
+	og.walk_recursion(node)
+}
+
+func (og *OgpContent) walk_recursion(node *html.Node) {
+	if node.Type == html.ElementNode {
+		switch node.Data {
+		case HTMLMetaTag:
+			meta := Meta{}
+			for _, attr := range node.Attr {
+				switch attr.Key {
+				case "property":
+					meta.Property = attr.Val
+				case "content":
+					meta.Content = attr.Val
+				case "name":
+					meta.Name = attr.Val
+				}
+			}
+
+			switch meta.Property {
 			case "og:title":
-				result.Title = attr.Val
+				og.Title = meta.Content
 			case "og:type":
-				result.Type = attr.Val
+				og.Type = meta.Content
 			case "og:Url":
-				result.Url = attr.Val
+				og.Url = meta.Content
 			case "og:image":
-				result.Image = attr.Val
+				og.Image = meta.Content
 			case "og:site_name":
-				result.SiteName = attr.Val
+				og.SiteName = meta.Content
 			case "og:description":
-				result.Description = attr.Val
+				og.Description = meta.Content
 			}
 		}
 	}
 
-	fmt.Printf("%+v\n", result)
-}
-
-func walk(node *html.Node, res map[string][]*html.Node) map[string][]*html.Node {
-	if node.Type == html.ElementNode {
-		switch node.Data {
-		case HTMLMetaTag:
-			res[node.Data] = append(res[node.Data], node)
-		}
-	}
-
 	for child := node.FirstChild; child != nil; child = child.NextSibling {
-		walk(child, res)
+		og.walk_recursion(child)
 	}
-
-	return res
 }
