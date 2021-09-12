@@ -17,7 +17,7 @@ Query: <%= @query %><br>
 <%= for result <- @results do %>
 <tr>
     <td><%= result[ "id" ] %></td>
-    <td><%= result[ "title" ] %></td>
+    <td><a href=<%= result["url"] %>><%= result[ "title" ] %></a></td>
     <td><%= result[ "created_at" ] %></td>
 </tr>
 <% end %>
