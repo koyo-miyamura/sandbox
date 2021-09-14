@@ -34,4 +34,4 @@ redix_sample-\*.tar
 
 /tmp/
 
-./data
+data/
