@@ -1,7 +1,10 @@
+# frozen_string_literal: true
+
 require 'sample/version'
 require 'uri'
 require 'net/http'
 
+# Sample
 module Sample
   class Error < StandardError; end
 
