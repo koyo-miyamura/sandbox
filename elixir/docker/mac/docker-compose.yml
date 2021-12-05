@@ -9,7 +9,7 @@ services:
     links:
       - db
     ports:
-      - 4001:4001
+      - 4000:4000
     volumes:
       - .:/work
     working_dir: /work
