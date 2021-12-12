@@ -1,14 +1,4 @@
 <h1>Listing Users</h1>
-
-<%= if @live_action in [:new, :edit] do %>
-  <%= live_modal LvPracticeWeb.UserLive.FormComponent,
-    id: @user.id || :new,
-    title: @page_title,
-    action: @live_action,
-    user: @user,
-    return_to: Routes.user_index_path(@socket, :index) %>
-<% end %>
-
 <table>
   <thead>
     <tr>
@@ -25,8 +15,7 @@
         <td><%= user.age %></td>
 
         <td>
-          <span><%= live_redirect "Show", to: Routes.user_show_path(@socket, :show, user) %></span>
-          <span><%= live_patch "Edit", to: Routes.user_index_path(@socket, :edit, user) %></span>
+          <span><%= live_redirect "Show", to: Routes.live_path(@socket, UserLive.Show) %></span>
           <span><%= link "Delete", to: "#", phx_click: "delete", phx_value_id: user.id, data: [confirm: "Are you sure?"] %></span>
         </td>
       </tr>
@@ -34,4 +23,4 @@
   </tbody>
 </table>
 
-<span><%= live_patch "New User", to: Routes.user_index_path(@socket, :new) %></span>
+<span><%= live_patch "New User", to: Routes.live_path(@socket, UserLive.New) %></span>
