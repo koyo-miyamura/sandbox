@@ -12,10 +12,7 @@ defmodule LvPracticeWeb.UserLive.Show do
   def handle_params(%{"id" => id}, _, socket) do
     {:noreply,
      socket
-     |> assign(:page_title, page_title(socket.assigns.live_action))
+     |> assign(:page_title, "Show User")
      |> assign(:user, Users.get_user!(id))}
   end
-
-  defp page_title(:show), do: "Show User"
-  defp page_title(:edit), do: "Edit User"
 end

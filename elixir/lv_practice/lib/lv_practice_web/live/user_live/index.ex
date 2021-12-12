@@ -2,7 +2,6 @@ defmodule LvPracticeWeb.UserLive.Index do
   use LvPracticeWeb, :live_view
 
   alias LvPractice.Users
-  alias LvPractice.Users.User
 
   @impl true
   def mount(_params, _session, socket) do

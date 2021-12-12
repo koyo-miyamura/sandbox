@@ -1,0 +1,6 @@
+<%= live_component LvPracticeWeb.UserLive.FormComponent,
+    id: :new,
+    title: @page_title,
+    action: :new,
+    user: @user,
+    return_to: Routes.live_path(@socket, LvPracticeWeb.UserLive.Index) %>
