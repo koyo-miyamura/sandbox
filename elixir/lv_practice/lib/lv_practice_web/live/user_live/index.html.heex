@@ -1,29 +1,26 @@
 <h1>Listing Users</h1>
-<table>
-  <thead>
-    <tr>
-      <th>ID</th>
-      <th>Name</th>
-      <th>Age</th>
 
-      <th></th>
+<LvPracticeWeb.Components.Table.table>
+  <LvPracticeWeb.Components.Table.table_header>
+    <th>ID</th>
+    <th>Name</th>
+    <th>Age</th>
+
+    <th></th>
+  </LvPracticeWeb.Components.Table.table_header>
+  <LvPracticeWeb.Components.Table.table_body let={user} users={@users}>
+    <tr id={"user-#{user.id}"}>
+      <td><%= user.id %></td>
+      <td><%= user.name %></td>
+      <td><%= user.age %></td>
+
+      <td>
+        <span><%= live_redirect "Show", to: Routes.live_path(@socket, LvPracticeWeb.UserLive.Show, user) %></span>
+        <span><%= live_redirect "Edit", to: Routes.live_path(@socket, LvPracticeWeb.UserLive.Edit, user) %></span>
+        <span><%= link "Delete", to: "#", phx_click: "delete", phx_value_id: user.id, data: [confirm: "Are you sure?"] %></span>
+      </td>
     </tr>
-  </thead>
-  <tbody id="users">
-    <%= for user <- @users do %>
-      <tr id={"user-#{user.id}"}>
-        <td><%= user.id %></td>
-        <td><%= user.name %></td>
-        <td><%= user.age %></td>
-
-        <td>
-          <span><%= live_redirect "Show", to: Routes.live_path(@socket, LvPracticeWeb.UserLive.Show, user) %></span>
-          <span><%= live_redirect "Edit", to: Routes.live_path(@socket, LvPracticeWeb.UserLive.Edit, user) %></span>
-          <span><%= link "Delete", to: "#", phx_click: "delete", phx_value_id: user.id, data: [confirm: "Are you sure?"] %></span>
-        </td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
+  </LvPracticeWeb.Components.Table.table_body>
+</LvPracticeWeb.Components.Table.table>
 
 <span><%= live_redirect "New User", to: Routes.live_path(@socket, LvPracticeWeb.UserLive.New) %></span>
