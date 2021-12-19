@@ -21,6 +21,11 @@ defmodule LvPractice.Users do
     Repo.all(User)
   end
 
+  def paginate_users(params \\ []) do
+    User
+    |> Repo.paginate(params)
+  end
+
   @doc """
   Gets a single user.
 

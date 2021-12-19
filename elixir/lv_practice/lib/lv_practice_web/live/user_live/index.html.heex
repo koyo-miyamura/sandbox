@@ -23,4 +23,6 @@
   </LvPracticeWeb.Components.Table.table_body>
 </LvPracticeWeb.Components.Table.table>
 
+<%= live_component LvPracticeWeb.Components.Paginator, id: :paginator, total_count: @total_entries, page_size: @page_size, page: @page, total_pages: @total_pages %>
+
 <span><%= live_redirect "New User", to: Routes.live_path(@socket, LvPracticeWeb.UserLive.New) %></span>
