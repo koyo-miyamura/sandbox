@@ -1,9 +1,9 @@
 defmodule LvPracticeWeb.Components.Paginator do
-  use LvPracticeWeb, :live_component
+  use Phoenix.Component
 
-  def render(assigns) do
+  def paginator(assigns) do
     ~H"""
-    <div id={@id}>
+    <div>
       <div>
         <p>表示件数：</p>
         <div>
