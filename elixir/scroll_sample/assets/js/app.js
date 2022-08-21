@@ -40,21 +40,16 @@ let scrollAt = (el) => {
 
 Hooks.InfiniteScroll = {
   page() { return this.el.dataset.page },
-  max_page() { return this.el.dataset.max_page },
+  total_pages() { return this.el.dataset.total_pages },
   mounted(){
     const $scrollDiv = document.querySelector(this.el.dataset.el)
-    this.pending = this.page()
     $scrollDiv.addEventListener("scroll", _e => {
-      console.log(this.pending)
-      console.log(this.page())
-      console.log(this.max_page())
-      if(this.pending == this.page() && scrollAt($scrollDiv) > 90){
-        this.pending = this.page() + 1
+      if(this.page() != this.total_pages() && scrollAt($scrollDiv) > 90){
         this.pushEvent("load-more", {})
       }
     })
   },
-  updated(){ this.pending = this.page() }
+  // updated(){ this.pending = this.page() }
 }
 
 let csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")

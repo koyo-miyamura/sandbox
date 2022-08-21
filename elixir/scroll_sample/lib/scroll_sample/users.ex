@@ -19,15 +19,9 @@ defmodule ScrollSample.Users do
   """
   def list_users(current_page, per_page) do
     from(u in User,
-      order_by: [asc: u.id],
-      offset: ^((current_page - 1) * per_page),
-      limit: ^per_page
+      order_by: [asc: u.id]
     )
-    |> Repo.all()
-  end
-
-  def num_pages do
-    Repo.all(User) |> length()
+    |> Repo.paginate(page: current_page, page_size: per_page)
   end
 
   @doc """

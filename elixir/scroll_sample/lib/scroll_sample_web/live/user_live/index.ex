@@ -12,7 +12,7 @@ defmodule ScrollSampleWeb.UserLive.Index do
     {:ok,
      socket
      |> assign(:page, @default_page)
-     |> assign(:max_page, Users.num_pages())
+     |> assign(:total_pages, total_pages())
      |> assign(:users, list_users(@default_page, @per_page))}
   end
 
@@ -56,6 +56,10 @@ defmodule ScrollSampleWeb.UserLive.Index do
   end
 
   defp list_users(page, per_page) do
-    Users.list_users(page, per_page)
+    Users.list_users(page, per_page).entries
+  end
+
+  defp total_pages do
+    Users.list_users(@default_page, @per_page).total_pages
   end
 end

@@ -23,7 +23,7 @@
         <th></th>
       </tr>
     </thead>
-    <tbody id="users" phx-update="append" phx-hook="InfiniteScroll" data-page={@page} data-max_page={@max_page} data-el=".scroll-div">
+    <tbody id="users" phx-update="append" phx-hook="InfiniteScroll" data-page={@page} data-total_pages={@total_pages} data-el=".scroll-div">
       <%= for user <- @users do %>
         <tr id={"user-#{user.id}"}>
           <td><%= user.id %></td>
