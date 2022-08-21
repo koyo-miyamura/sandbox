@@ -4,9 +4,16 @@ defmodule ScrollSampleWeb.UserLive.Index do
   alias ScrollSample.Users
   alias ScrollSample.Users.User
 
+  @default_page 1
+  @per_page 15
+
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, assign(socket, :users, list_users())}
+    {:ok,
+     socket
+     |> assign(:page, @default_page)
+     |> assign(:max_page, Users.num_pages())
+     |> assign(:users, list_users(@default_page, @per_page))}
   end
 
   @impl true
@@ -37,10 +44,18 @@ defmodule ScrollSampleWeb.UserLive.Index do
     user = Users.get_user!(id)
     {:ok, _} = Users.delete_user(user)
 
-    {:noreply, assign(socket, :users, list_users())}
+    {:noreply, assign(socket, :users, list_users(@default_page, @per_page))}
   end
 
-  defp list_users do
-    Users.list_users()
+  @impl true
+  def handle_event("load-more", _, %{assigns: assigns} = socket) do
+    {:noreply,
+     socket
+     |> assign(:page, assigns.page + 1)
+     |> assign(:users, list_users(assigns.page + 1, @per_page))}
+  end
+
+  defp list_users(page, per_page) do
+    Users.list_users(page, per_page)
   end
 end

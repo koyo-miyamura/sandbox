@@ -26,8 +26,39 @@ import {Socket} from "phoenix"
 import {LiveSocket} from "phoenix_live_view"
 import topbar from "../vendor/topbar"
 
+let Hooks = {}
+
+let scrollAt = (el) => {
+  let scrollTop = el.scrollTop
+  let scrollHeight = el.scrollHeight
+  let clientHeight = el.clientHeight
+
+  let result = scrollTop / (scrollHeight - clientHeight) * 100
+
+  return result
+}
+
+Hooks.InfiniteScroll = {
+  page() { return this.el.dataset.page },
+  max_page() { return this.el.dataset.max_page },
+  mounted(){
+    const $scrollDiv = document.querySelector(this.el.dataset.el)
+    this.pending = this.page()
+    $scrollDiv.addEventListener("scroll", _e => {
+      console.log(this.pending)
+      console.log(this.page())
+      console.log(this.max_page())
+      if(this.pending == this.page() && scrollAt($scrollDiv) > 90){
+        this.pending = this.page() + 1
+        this.pushEvent("load-more", {})
+      }
+    })
+  },
+  updated(){ this.pending = this.page() }
+}
+
 let csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")
-let liveSocket = new LiveSocket("/live", Socket, {params: {_csrf_token: csrfToken}})
+let liveSocket = new LiveSocket("/live", Socket, {hooks: Hooks, params: {_csrf_token: csrfToken}})
 
 // Show progress bar on live navigation and form submits
 topbar.config({barColors: {0: "#29d"}, shadowColor: "rgba(0, 0, 0, .3)"})

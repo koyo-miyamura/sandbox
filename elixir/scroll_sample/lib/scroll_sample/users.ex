@@ -13,12 +13,21 @@ defmodule ScrollSample.Users do
 
   ## Examples
 
-      iex> list_users()
+      iex> list_users(current_page, per_page)
       [%User{}, ...]
 
   """
-  def list_users do
-    Repo.all(User)
+  def list_users(current_page, per_page) do
+    from(u in User,
+      order_by: [asc: u.id],
+      offset: ^((current_page - 1) * per_page),
+      limit: ^per_page
+    )
+    |> Repo.all()
+  end
+
+  def num_pages do
+    Repo.all(User) |> length()
   end
 
   @doc """
