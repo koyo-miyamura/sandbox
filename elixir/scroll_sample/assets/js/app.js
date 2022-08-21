@@ -41,15 +41,14 @@ let scrollAt = (el) => {
 Hooks.InfiniteScroll = {
   page() { return this.el.dataset.page },
   total_pages() { return this.el.dataset.total_pages },
-  mounted(){
+  mounted() {
     const $scrollDiv = document.querySelector(this.el.dataset.el)
     $scrollDiv.addEventListener("scroll", _e => {
       if(this.page() != this.total_pages() && scrollAt($scrollDiv) > 90){
         this.pushEvent("load-more", {})
       }
     })
-  },
-  // updated(){ this.pending = this.page() }
+  }
 }
 
 let csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")
