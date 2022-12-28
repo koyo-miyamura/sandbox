@@ -9,7 +9,7 @@ const SignUpScreen = () => {
 
   return (
     <Box flex={1} alignItems="center" mt="40">
-      <Text w="80%" textAlign={"start"} fontSize="2xl">
+      <Text w="80%" fontSize="2xl">
         SignUp
       </Text>
       <AuthForm action={signup} />
