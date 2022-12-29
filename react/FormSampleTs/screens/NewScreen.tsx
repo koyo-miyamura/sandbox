@@ -1,9 +1,12 @@
+import { useState } from 'react';
 import {
   VStack,
   Input,
   Button,
   FormControl,
-  Box
+  Box,
+  Select,
+  CheckIcon
 } from 'native-base';
 
 type Props = {
@@ -11,8 +14,10 @@ type Props = {
 };
 
 const NewScreen : React.FC<Props> = ({navigation}) => {
+  const [language, setLanguage] = useState("");
+
   const handleSubmit = () => {
-    console.log("submit!");
+    console.log(`submit! language=${language}`);
     navigation.navigate("Index");
   };
   return (
@@ -24,6 +29,16 @@ const NewScreen : React.FC<Props> = ({navigation}) => {
             placeholder="text"
           />
         </FormControl>
+        <Select selectedValue={language} minWidth={200} accessibilityLabel="Select your favorite programming language" placeholder="Select your favorite programming language" onValueChange={itemValue => setLanguage(itemValue)} _selectedItem={{
+          bg: "cyan.600",
+          endIcon: <CheckIcon size={4} />
+        }}>
+          <Select.Item label="JavaScript" value="js" />
+          <Select.Item label="TypeScript" value="ts" />
+          <Select.Item label="C" value="c" />
+          <Select.Item label="Python" value="py" />
+          <Select.Item label="Java" value="java" />
+        </Select>
         <Button onPress={() => handleSubmit()}>
           Submit
         </Button>
