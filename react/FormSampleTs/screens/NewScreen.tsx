@@ -1,10 +1,31 @@
-import { Box, Text } from "native-base";
+import {
+  VStack,
+  Input,
+  Button,
+  FormControl,
+} from 'native-base';
 
-const NewScreen : React.FC = () => {
+type Props = {
+  navigation: any;
+};
+
+const NewScreen : React.FC<Props> = ({navigation}) => {
+  const handleSubmit = () => {
+    console.log("submit!");
+    navigation.navigate("Index");
+  };
   return (
-    <Box flex={1} alignItems="center" justifyContent="center">
-      <Text>New</Text>
-    </Box>
+    <VStack width="80%" space={4}>
+      <FormControl isRequired>
+        <FormControl.Label>First Name</FormControl.Label>
+        <Input
+          placeholder="text"
+        />
+      </FormControl>
+      <Button onPress={() => handleSubmit()}>
+        Submit
+      </Button>
+    </VStack>
   );
 };
 
