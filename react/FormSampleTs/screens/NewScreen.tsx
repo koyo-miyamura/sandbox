@@ -3,6 +3,7 @@ import {
   Input,
   Button,
   FormControl,
+  Box
 } from 'native-base';
 
 type Props = {
@@ -15,17 +16,19 @@ const NewScreen : React.FC<Props> = ({navigation}) => {
     navigation.navigate("Index");
   };
   return (
-    <VStack width="80%" space={4}>
-      <FormControl isRequired>
-        <FormControl.Label>First Name</FormControl.Label>
-        <Input
-          placeholder="text"
-        />
-      </FormControl>
-      <Button onPress={() => handleSubmit()}>
-        Submit
-      </Button>
-    </VStack>
+    <Box flex={1} alignItems="center" mt="2">
+      <VStack width="80%" space={4}>
+        <FormControl isRequired>
+          <FormControl.Label>First Name</FormControl.Label>
+          <Input
+            placeholder="text"
+          />
+        </FormControl>
+        <Button onPress={() => handleSubmit()}>
+          Submit
+        </Button>
+      </VStack>
+    </Box>
   );
 };
 
