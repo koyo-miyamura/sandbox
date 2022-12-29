@@ -1,5 +1,5 @@
 import { NativeBaseProvider } from "native-base";
-import { SafeAreaView, Platform, StyleSheet } from "react-native";
+import { SafeAreaView, StyleSheet } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { AppNavigator } from "../navigation/AppNavigator";
 
