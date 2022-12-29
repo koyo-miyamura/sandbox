@@ -6,7 +6,8 @@ import {
   FormControl,
   Box,
   Select,
-  CheckIcon
+  CheckIcon,
+  TextArea
 } from 'native-base';
 
 type Props = {
@@ -39,6 +40,7 @@ const NewScreen : React.FC<Props> = ({navigation}) => {
           <Select.Item label="Python" value="py" />
           <Select.Item label="Java" value="java" />
         </Select>
+        <TextArea h={20} placeholder="Text Area" autoCompleteType={false} />
         <Button onPress={() => handleSubmit()}>
           Submit
         </Button>
