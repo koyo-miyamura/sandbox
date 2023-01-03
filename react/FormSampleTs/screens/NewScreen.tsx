@@ -1,4 +1,3 @@
-import { useState } from "react";
 import {
     VStack,
     Input,
@@ -17,23 +16,31 @@ type Props = {
 
 type FormData = {
     firstName: string;
+    language: string;
 };
 
 const NewScreen: React.FC<Props> = ({ navigation }) => {
-    const [language, setLanguage] = useState("");
-
     const {
         control,
         handleSubmit,
+        setError,
         formState: { errors },
     } = useForm<FormData>({
         defaultValues: {
-            firstName: "",
+            firstName: "koyo",
+            language: "",
         },
     });
     const onSubmit = (data: FormData) => {
         console.log("submiting with: ", data);
-        navigation.navigate("Index");
+
+        if (data.language === "") {
+            setError("language", { type: "required" });
+        } else if (data.language === "invalid") {
+            setError("language", { type: "invalid" });
+        } else {
+            navigation.navigate("Index");
+        }
     };
 
     console.log("errors", errors);
@@ -42,7 +49,9 @@ const NewScreen: React.FC<Props> = ({ navigation }) => {
         <Box flex={1} alignItems="center" mt="2">
             <VStack width="80%" space={4}>
                 <FormControl isRequired isInvalid={"firstName" in errors}>
-                    <FormControl.Label>First Name</FormControl.Label>
+                    <FormControl.Label>
+                        First Name（rules でバリデーション）
+                    </FormControl.Label>
                     <Controller
                         control={control}
                         render={({ field: { onChange, onBlur, value } }) => (
@@ -62,24 +71,45 @@ const NewScreen: React.FC<Props> = ({ navigation }) => {
                         </FormControl.ErrorMessage>
                     )}
                 </FormControl>
-                <FormControl isRequired>
-                    <FormControl.Label>Select Language</FormControl.Label>
-                    <Select
-                        selectedValue={language}
-                        minWidth={200}
-                        accessibilityLabel="Select your favorite programming language"
-                        placeholder="Select your favorite programming language"
-                        onValueChange={(itemValue) => setLanguage(itemValue)}
-                        _selectedItem={{
-                            bg: "cyan.600",
-                            endIcon: <CheckIcon size={4} />,
-                        }}>
-                        <Select.Item label="JavaScript" value="js" />
-                        <Select.Item label="TypeScript" value="ts" />
-                        <Select.Item label="C" value="c" />
-                        <Select.Item label="Python" value="py" />
-                        <Select.Item label="Java" value="java" />
-                    </Select>
+                <FormControl isRequired isInvalid={"language" in errors}>
+                    <FormControl.Label>
+                        Select Language（Submit 後にバリデーション）
+                    </FormControl.Label>
+                    <Controller
+                        control={control}
+                        render={({ field: { onChange, value } }) => (
+                            <Select
+                                selectedValue={value}
+                                minWidth={200}
+                                accessibilityLabel="Select your favorite programming language"
+                                placeholder="Select your favorite programming language"
+                                onValueChange={(itemValue) =>
+                                    onChange(itemValue)
+                                }
+                                _selectedItem={{
+                                    bg: "cyan.600",
+                                    endIcon: <CheckIcon size={4} />,
+                                }}>
+                                <Select.Item label="JavaScript" value="js" />
+                                <Select.Item label="TypeScript" value="ts" />
+                                <Select.Item
+                                    label="Invalid language"
+                                    value="invalid"
+                                />
+                            </Select>
+                        )}
+                        name="language"
+                    />
+                    {errors.language?.type === "required" && (
+                        <FormControl.ErrorMessage>
+                            これは必須です
+                        </FormControl.ErrorMessage>
+                    )}
+                    {errors.language?.type === "invalid" && (
+                        <FormControl.ErrorMessage>
+                            不正な言語です
+                        </FormControl.ErrorMessage>
+                    )}
                 </FormControl>
                 <FormControl isRequired>
                     <FormControl.Label>自由記述</FormControl.Label>
