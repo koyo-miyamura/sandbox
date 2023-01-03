@@ -14,9 +14,16 @@ type Props = {
     navigation: any;
 };
 
+const Languages = {
+    blank: "",
+    javascript: "js",
+    typescript: "ts",
+    invalid: "invalid",
+} as const;
+
 type FormData = {
     firstName: string;
-    language: string;
+    language: typeof Languages[keyof typeof Languages];
 };
 
 const NewScreen: React.FC<Props> = ({ navigation }) => {
@@ -28,15 +35,15 @@ const NewScreen: React.FC<Props> = ({ navigation }) => {
     } = useForm<FormData>({
         defaultValues: {
             firstName: "koyo",
-            language: "",
+            language: Languages.blank,
         },
     });
     const onSubmit = (data: FormData) => {
         console.log("submiting with: ", data);
 
-        if (data.language === "") {
+        if (data.language === Languages.blank) {
             setError("language", { type: "required" });
-        } else if (data.language === "invalid") {
+        } else if (data.language === Languages.invalid) {
             setError("language", { type: "invalid" });
         } else {
             navigation.navigate("Index");
@@ -90,11 +97,17 @@ const NewScreen: React.FC<Props> = ({ navigation }) => {
                                     bg: "cyan.600",
                                     endIcon: <CheckIcon size={4} />,
                                 }}>
-                                <Select.Item label="JavaScript" value="js" />
-                                <Select.Item label="TypeScript" value="ts" />
+                                <Select.Item
+                                    label="JavaScript"
+                                    value={Languages.javascript}
+                                />
+                                <Select.Item
+                                    label="TypeScript"
+                                    value={Languages.typescript}
+                                />
                                 <Select.Item
                                     label="Invalid language"
-                                    value="invalid"
+                                    value={Languages.invalid}
                                 />
                             </Select>
                         )}
