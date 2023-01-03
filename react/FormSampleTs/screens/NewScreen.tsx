@@ -24,6 +24,7 @@ const Languages = {
 type FormData = {
     firstName: string;
     language: typeof Languages[keyof typeof Languages];
+    freeText: string;
 };
 
 const NewScreen: React.FC<Props> = ({ navigation }) => {
@@ -36,6 +37,7 @@ const NewScreen: React.FC<Props> = ({ navigation }) => {
         defaultValues: {
             firstName: "koyo",
             language: Languages.blank,
+            freeText: "free text",
         },
     });
     const onSubmit = (data: FormData) => {
@@ -78,6 +80,7 @@ const NewScreen: React.FC<Props> = ({ navigation }) => {
                         </FormControl.ErrorMessage>
                     )}
                 </FormControl>
+
                 <FormControl isRequired isInvalid={"language" in errors}>
                     <FormControl.Label>
                         Select Language（Submit 後にバリデーション）
@@ -124,14 +127,31 @@ const NewScreen: React.FC<Props> = ({ navigation }) => {
                         </FormControl.ErrorMessage>
                     )}
                 </FormControl>
-                <FormControl isRequired>
-                    <FormControl.Label>自由記述</FormControl.Label>
-                    <TextArea
-                        h={20}
-                        placeholder="Text Area"
-                        autoCompleteType={false}
+
+                <FormControl isRequired isInvalid={"freeText" in errors}>
+                    <FormControl.Label>
+                        自由記述（rules でバリデーション）
+                    </FormControl.Label>
+                    <Controller
+                        control={control}
+                        render={({ field: { onChange, value } }) => (
+                            <TextArea
+                                placeholder="TextArea"
+                                onChangeText={onChange}
+                                defaultValue={value}
+                                autoCompleteType={false}
+                            />
+                        )}
+                        name="freeText"
+                        rules={{ required: true }}
                     />
+                    {errors.freeText && (
+                        <FormControl.ErrorMessage>
+                            これは必須です
+                        </FormControl.ErrorMessage>
+                    )}
                 </FormControl>
+
                 <Button onPress={handleSubmit(onSubmit)}>Submit</Button>
             </VStack>
         </Box>
