@@ -11,6 +11,7 @@ import {
 import { useForm, Controller } from "react-hook-form";
 
 type Props = {
+    route: any;
     navigation: any;
 };
 
@@ -27,7 +28,9 @@ type FormData = {
     freeText: string;
 };
 
-const NewScreen: React.FC<Props> = ({ navigation }) => {
+const NewScreen: React.FC<Props> = ({ route, navigation }) => {
+    const { id } = route.params;
+    console.log(`id: ${id}`);
     const {
         control,
         handleSubmit,
