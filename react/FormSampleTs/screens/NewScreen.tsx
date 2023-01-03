@@ -65,6 +65,8 @@ const NewScreen: React.FC<Props> = ({ navigation }) => {
                         control={control}
                         render={({ field: { onChange, onBlur, value } }) => (
                             <Input
+                                bg={errors.firstName && "error.100"}
+                                borderColor={errors.firstName && "error.600"}
                                 placeholder="text"
                                 onBlur={onBlur}
                                 onChangeText={onChange}
@@ -89,6 +91,8 @@ const NewScreen: React.FC<Props> = ({ navigation }) => {
                         control={control}
                         render={({ field: { onChange, value } }) => (
                             <Select
+                                bg={errors.language && "error.100"}
+                                borderColor={errors.language && "error.600"}
                                 selectedValue={value}
                                 minWidth={200}
                                 accessibilityLabel="Select your favorite programming language"
@@ -136,6 +140,8 @@ const NewScreen: React.FC<Props> = ({ navigation }) => {
                         control={control}
                         render={({ field: { onChange, value } }) => (
                             <TextArea
+                                bg={errors.freeText && "error.100"}
+                                borderColor={errors.freeText && "error.600"}
                                 placeholder="TextArea"
                                 onChangeText={onChange}
                                 defaultValue={value}
