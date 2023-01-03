@@ -9,27 +9,51 @@ import {
   CheckIcon,
   TextArea
 } from 'native-base';
+import { useForm, Controller } from 'react-hook-form';
 
 type Props = {
   navigation: any;
 };
 
+type FormData = {
+  firstName: string;
+};
+
 const NewScreen : React.FC<Props> = ({navigation}) => {
   const [language, setLanguage] = useState("");
 
-  const handleSubmit = () => {
-    console.log(`submit! language=${language}`);
+  const { control, handleSubmit, formState: { errors } } = useForm<FormData>({
+    defaultValues: {
+      firstName: ''
+    }
+  });
+  const onSubmit = (data: FormData) => {
+    console.log('submiting with: ', data);
     navigation.navigate("Index");
   };
+
+  console.log("errors", errors)
+
   return (
     <Box flex={1} alignItems="center" mt="2">
       <VStack width="80%" space={4}>
-        <FormControl isRequired>
+        <FormControl isRequired isInvalid={"firstName" in errors}>
           <FormControl.Label>First Name</FormControl.Label>
-          <Input
-            placeholder="text"
+          <Controller
+            control={control}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <Input
+                placeholder="text"
+                onBlur={onBlur}
+                onChangeText={onChange}
+                value={value}
+              />
+            )}
+            name="firstName"
+            rules={{ required: true }}
           />
-        </FormControl>
+          {errors.firstName && <FormControl.ErrorMessage>これは必須です</FormControl.ErrorMessage>}
+          </FormControl>
         <FormControl isRequired>
         <FormControl.Label>Select Language</FormControl.Label>
           <Select selectedValue={language} minWidth={200} accessibilityLabel="Select your favorite programming language" placeholder="Select your favorite programming language" onValueChange={itemValue => setLanguage(itemValue)} _selectedItem={{
@@ -47,7 +71,7 @@ const NewScreen : React.FC<Props> = ({navigation}) => {
           <FormControl.Label>自由記述</FormControl.Label>
           <TextArea h={20} placeholder="Text Area" autoCompleteType={false} />
         </FormControl>
-        <Button onPress={() => handleSubmit()}>
+        <Button onPress={handleSubmit(onSubmit)}>
           Submit
         </Button>
       </VStack>
