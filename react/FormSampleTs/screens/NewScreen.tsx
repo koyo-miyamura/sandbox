@@ -87,12 +87,12 @@ const NewScreen: React.FC<Props> = ({ route, navigation }) => {
         formKey: keyof FormData,
     ) => {
         const savedData = { [formKey]: e.nativeEvent.text };
-        console.log(savedData);
+        updateData(id, savedData);
     };
 
     const handleChangeSelect = (itemValue: string, formKey: keyof FormData) => {
         const savedData = { [formKey]: itemValue };
-        console.log(savedData);
+        updateData(id, savedData);
     };
 
     console.log("errors", errors);
