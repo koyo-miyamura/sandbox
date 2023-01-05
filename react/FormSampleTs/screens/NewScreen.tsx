@@ -10,6 +10,8 @@ import {
 } from "native-base";
 import { useForm, Controller } from "react-hook-form";
 import { NativeSyntheticEvent, TextInputFocusEventData } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useEffect, useState } from "react";
 
 type Props = {
     route: any;
@@ -24,13 +26,36 @@ const Languages = {
 } as const;
 
 type FormData = {
-    firstName: string;
-    language: typeof Languages[keyof typeof Languages];
-    freeText: string;
+    firstName?: string;
+    language?: typeof Languages[keyof typeof Languages];
+    freeText?: string;
+};
+
+const build_storage_key = (id: number | string) => `formdata_${id}`;
+
+const getData = async (id: number | string) => {
+    const jsonValue = await AsyncStorage.getItem(build_storage_key(id));
+    return jsonValue != null ? JSON.parse(jsonValue) : {};
+};
+
+const updateData = async (id: number | string, data: FormData) => {
+    await AsyncStorage.mergeItem(build_storage_key(id), JSON.stringify(data));
 };
 
 const NewScreen: React.FC<Props> = ({ route, navigation }) => {
     const { id } = route.params;
+    const [formData, setFormData] = useState<FormData>({});
+
+    useEffect(() => {
+        (async () => {
+            const storageData = await getData(id);
+            setFormData(storageData);
+            console.log(`storageData: ${JSON.stringify(storageData)}`);
+        })();
+    }, []);
+
+    console.log(`formData: ${JSON.stringify(formData)}`);
+
     const {
         control,
         handleSubmit,
@@ -46,6 +71,8 @@ const NewScreen: React.FC<Props> = ({ route, navigation }) => {
     const onSubmit = (data: FormData) => {
         console.log("submiting with: ", data);
 
+        updateData(id, data);
+
         if (data.language === Languages.blank) {
             setError("language", { type: "required" });
         } else if (data.language === Languages.invalid) {
@@ -57,8 +84,15 @@ const NewScreen: React.FC<Props> = ({ route, navigation }) => {
 
     const handleBlurText = (
         e: NativeSyntheticEvent<TextInputFocusEventData>,
+        formKey: keyof FormData,
     ) => {
-        console.log(e.nativeEvent.text);
+        const savedData = { [formKey]: e.nativeEvent.text };
+        console.log(savedData);
+    };
+
+    const handleChangeSelect = (itemValue: string, formKey: keyof FormData) => {
+        const savedData = { [formKey]: itemValue };
+        console.log(savedData);
     };
 
     console.log("errors", errors);
@@ -77,7 +111,7 @@ const NewScreen: React.FC<Props> = ({ route, navigation }) => {
                                 bg={errors.firstName && "error.100"}
                                 borderColor={errors.firstName && "error.600"}
                                 placeholder="text"
-                                onBlur={handleBlurText}
+                                onBlur={(e) => handleBlurText(e, "firstName")}
                                 onChangeText={onChange}
                                 value={value}
                             />
@@ -107,7 +141,7 @@ const NewScreen: React.FC<Props> = ({ route, navigation }) => {
                                 accessibilityLabel="Select your favorite programming language"
                                 placeholder="Select your favorite programming language"
                                 onValueChange={(itemValue) => {
-                                    console.log(itemValue);
+                                    handleChangeSelect(itemValue, "language");
                                     onChange(itemValue);
                                 }}
                                 _selectedItem={{
@@ -154,7 +188,7 @@ const NewScreen: React.FC<Props> = ({ route, navigation }) => {
                                 borderColor={errors.freeText && "error.600"}
                                 placeholder="TextArea"
                                 onChangeText={onChange}
-                                onBlur={handleBlurText}
+                                onBlur={(e) => handleBlurText(e, "freeText")}
                                 defaultValue={value}
                                 autoCompleteType={false}
                             />
