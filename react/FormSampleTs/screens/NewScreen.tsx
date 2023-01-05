@@ -9,6 +9,7 @@ import {
     TextArea,
 } from "native-base";
 import { useForm, Controller } from "react-hook-form";
+import { NativeSyntheticEvent, TextInputFocusEventData } from "react-native";
 
 type Props = {
     route: any;
@@ -30,7 +31,6 @@ type FormData = {
 
 const NewScreen: React.FC<Props> = ({ route, navigation }) => {
     const { id } = route.params;
-    console.log(`id: ${id}`);
     const {
         control,
         handleSubmit,
@@ -55,6 +55,12 @@ const NewScreen: React.FC<Props> = ({ route, navigation }) => {
         }
     };
 
+    const handleBlurText = (
+        e: NativeSyntheticEvent<TextInputFocusEventData>,
+    ) => {
+        console.log(e.nativeEvent.text);
+    };
+
     console.log("errors", errors);
 
     return (
@@ -66,12 +72,12 @@ const NewScreen: React.FC<Props> = ({ route, navigation }) => {
                     </FormControl.Label>
                     <Controller
                         control={control}
-                        render={({ field: { onChange, onBlur, value } }) => (
+                        render={({ field: { onChange, value } }) => (
                             <Input
                                 bg={errors.firstName && "error.100"}
                                 borderColor={errors.firstName && "error.600"}
                                 placeholder="text"
-                                onBlur={onBlur}
+                                onBlur={handleBlurText}
                                 onChangeText={onChange}
                                 value={value}
                             />
@@ -100,9 +106,10 @@ const NewScreen: React.FC<Props> = ({ route, navigation }) => {
                                 minWidth={200}
                                 accessibilityLabel="Select your favorite programming language"
                                 placeholder="Select your favorite programming language"
-                                onValueChange={(itemValue) =>
-                                    onChange(itemValue)
-                                }
+                                onValueChange={(itemValue) => {
+                                    console.log(itemValue);
+                                    onChange(itemValue);
+                                }}
                                 _selectedItem={{
                                     bg: "cyan.600",
                                     endIcon: <CheckIcon size={4} />,
@@ -147,6 +154,7 @@ const NewScreen: React.FC<Props> = ({ route, navigation }) => {
                                 borderColor={errors.freeText && "error.600"}
                                 placeholder="TextArea"
                                 onChangeText={onChange}
+                                onBlur={handleBlurText}
                                 defaultValue={value}
                                 autoCompleteType={false}
                             />
