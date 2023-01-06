@@ -11,7 +11,7 @@ import {
 import { useForm, Controller } from "react-hook-form";
 import { NativeSyntheticEvent, TextInputFocusEventData } from "react-native";
 import { useStorage } from "../hooks/useStorage";
-import { updateStorageData } from "../lib/storage";
+import { updateStorageData, removeStorageData } from "../lib/storage";
 
 type Props = {
     route: any;
@@ -55,6 +55,8 @@ const NewScreen: React.FC<Props> = ({ route, navigation }) => {
         } else if (data.language === Languages.invalid) {
             setError("language", { type: "invalid" });
         } else {
+            // アップロードに成功したらデータ削除する
+            removeStorageData(id);
             navigation.navigate("Index");
         }
     };

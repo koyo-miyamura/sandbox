@@ -12,3 +12,7 @@ export const getStorageData = async (key: KeyType) => {
 export const updateStorageData = async (key: KeyType, data: Object) => {
     await AsyncStorage.mergeItem(buildStorageKey(key), JSON.stringify(data));
 };
+
+export const removeStorageData = async (key: KeyType) => {
+    await AsyncStorage.removeItem(buildStorageKey(key));
+};
