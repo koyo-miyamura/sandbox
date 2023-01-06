@@ -19,10 +19,9 @@ type Props = {
 };
 
 const Languages = {
-    blank: "",
-    javascript: "js",
-    typescript: "ts",
-    invalid: "invalid",
+    JavaScript: "js",
+    TypeScript: "ts",
+    "Invalid language": "invalid",
 } as const;
 
 type FormData = {
@@ -48,9 +47,9 @@ const NewScreen: React.FC<Props> = ({ route, navigation }) => {
     const onSubmit = (data: FormData) => {
         console.log("submiting with: ", data);
 
-        if (data.language === Languages.blank) {
+        if (data.language == null) {
             setError("language", { type: "required" });
-        } else if (data.language === Languages.invalid) {
+        } else if (data.language === Languages["Invalid language"]) {
             setError("language", { type: "invalid" });
         } else {
             // アップロードに成功したらデータ削除する
@@ -125,18 +124,17 @@ const NewScreen: React.FC<Props> = ({ route, navigation }) => {
                                     bg: "cyan.600",
                                     endIcon: <CheckIcon size={4} />,
                                 }}>
-                                <Select.Item
-                                    label="JavaScript"
-                                    value={Languages.javascript}
-                                />
-                                <Select.Item
-                                    label="TypeScript"
-                                    value={Languages.typescript}
-                                />
-                                <Select.Item
-                                    label="Invalid language"
-                                    value={Languages.invalid}
-                                />
+                                {Object.entries(Languages).map(
+                                    ([languageLabel, languageValue]) => {
+                                        return (
+                                            <Select.Item
+                                                key={languageLabel}
+                                                label={languageLabel}
+                                                value={languageValue}
+                                            />
+                                        );
+                                    },
+                                )}
                             </Select>
                         )}
                         name="language"
