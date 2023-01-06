@@ -48,8 +48,6 @@ const NewScreen: React.FC<Props> = ({ route, navigation }) => {
     const onSubmit = (data: FormData) => {
         console.log("submiting with: ", data);
 
-        updateStorageData(id, data);
-
         if (data.language === Languages.blank) {
             setError("language", { type: "required" });
         } else if (data.language === Languages.invalid) {
