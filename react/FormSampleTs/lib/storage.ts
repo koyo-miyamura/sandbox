@@ -1,14 +1,14 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-export type IDType = number | string;
+export type KeyType = number | string;
 
-const buildStorageKey = (id: IDType) => `storage_data_${id}`;
+const buildStorageKey = (key: KeyType) => `storage_data_${key}`;
 
-export const getStorageData = async (id: IDType) => {
-    const jsonValue = await AsyncStorage.getItem(buildStorageKey(id));
+export const getStorageData = async (key: KeyType) => {
+    const jsonValue = await AsyncStorage.getItem(buildStorageKey(key));
     return jsonValue != null ? JSON.parse(jsonValue) : {};
 };
 
-export const updateStorageData = async (id: IDType, data: Object) => {
-    await AsyncStorage.mergeItem(buildStorageKey(id), JSON.stringify(data));
+export const updateStorageData = async (key: KeyType, data: Object) => {
+    await AsyncStorage.mergeItem(buildStorageKey(key), JSON.stringify(data));
 };
