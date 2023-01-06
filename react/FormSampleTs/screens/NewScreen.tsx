@@ -10,8 +10,8 @@ import {
 } from "native-base";
 import { useForm, Controller } from "react-hook-form";
 import { NativeSyntheticEvent, TextInputFocusEventData } from "react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useEffect, useState } from "react";
+import { useStorage } from "../hooks/useStorage";
+import { updateStorageData } from "../lib/storage";
 
 type Props = {
     route: any;
@@ -31,28 +31,9 @@ type FormData = {
     freeText?: string;
 };
 
-const build_storage_key = (id: number | string) => `formdata_${id}`;
-
-const getData = async (id: number | string) => {
-    const jsonValue = await AsyncStorage.getItem(build_storage_key(id));
-    return jsonValue != null ? JSON.parse(jsonValue) : {};
-};
-
-const updateData = async (id: number | string, data: FormData) => {
-    await AsyncStorage.mergeItem(build_storage_key(id), JSON.stringify(data));
-};
-
 const NewScreen: React.FC<Props> = ({ route, navigation }) => {
     const { id } = route.params;
-    const [formData, setFormData] = useState<FormData>({});
-
-    useEffect(() => {
-        (async () => {
-            const storageData = await getData(id);
-            setFormData(storageData);
-            console.log(`storageData: ${JSON.stringify(storageData)}`);
-        })();
-    }, []);
+    const formData = useStorage(id);
 
     console.log(`formData: ${JSON.stringify(formData)}`);
 
@@ -62,16 +43,12 @@ const NewScreen: React.FC<Props> = ({ route, navigation }) => {
         setError,
         formState: { errors },
     } = useForm<FormData>({
-        defaultValues: {
-            firstName: "koyo",
-            language: Languages.blank,
-            freeText: "free text",
-        },
+        values: formData,
     });
     const onSubmit = (data: FormData) => {
         console.log("submiting with: ", data);
 
-        updateData(id, data);
+        updateStorageData(id, data);
 
         if (data.language === Languages.blank) {
             setError("language", { type: "required" });
@@ -87,12 +64,12 @@ const NewScreen: React.FC<Props> = ({ route, navigation }) => {
         formKey: keyof FormData,
     ) => {
         const savedData = { [formKey]: e.nativeEvent.text };
-        updateData(id, savedData);
+        updateStorageData(id, savedData);
     };
 
     const handleChangeSelect = (itemValue: string, formKey: keyof FormData) => {
         const savedData = { [formKey]: itemValue };
-        updateData(id, savedData);
+        updateStorageData(id, savedData);
     };
 
     console.log("errors", errors);
