@@ -11,7 +11,10 @@ import {
     Text,
 } from "native-base";
 import { useForm, Controller } from "react-hook-form";
-import { NativeSyntheticEvent, TextInputFocusEventData } from "react-native";
+import {
+    NativeSyntheticEvent,
+    TextInputEndEditingEventData,
+} from "react-native";
 import { useStorage } from "../hooks/useStorage";
 import { updateStorageData, removeStorageData } from "../lib/storage";
 import { formatDate, formatTime } from "../lib/dateformat";
@@ -67,8 +70,8 @@ const NewScreen: React.FC<Props> = ({ route, navigation }) => {
         }
     };
 
-    const handleBlurText = (
-        e: NativeSyntheticEvent<TextInputFocusEventData>,
+    const handleForcusOut = (
+        e: NativeSyntheticEvent<TextInputEndEditingEventData>,
         formKey: keyof FormData,
     ) => {
         console.log("nativeEvent", e.nativeEvent);
@@ -116,7 +119,9 @@ const NewScreen: React.FC<Props> = ({ route, navigation }) => {
                                 bg={errors.firstName && "error.100"}
                                 borderColor={errors.firstName && "error.600"}
                                 placeholder="text"
-                                onBlur={(e) => handleBlurText(e, "firstName")}
+                                onEndEditing={(e) =>
+                                    handleForcusOut(e, "firstName")
+                                }
                                 onChangeText={onChange}
                                 value={value}
                             />
@@ -195,7 +200,9 @@ const NewScreen: React.FC<Props> = ({ route, navigation }) => {
                                 borderColor={errors.freeText && "error.600"}
                                 placeholder="TextArea"
                                 onChangeText={onChange}
-                                onBlur={(e) => handleBlurText(e, "freeText")}
+                                onEndEditing={(e) =>
+                                    handleForcusOut(e, "freeText")
+                                }
                                 defaultValue={value}
                                 autoCompleteType={false}
                             />
