@@ -7,11 +7,16 @@ import {
     Select,
     CheckIcon,
     TextArea,
+    Pressable,
+    Text,
 } from "native-base";
 import { useForm, Controller } from "react-hook-form";
 import { NativeSyntheticEvent, TextInputFocusEventData } from "react-native";
 import { useStorage } from "../hooks/useStorage";
 import { updateStorageData, removeStorageData } from "../lib/storage";
+import { formatDate, formatTime } from "../lib/dateformat";
+import DateTimePickerModal from "react-native-modal-datetime-picker";
+import { useState } from "react";
 
 type Props = {
     route: any;
@@ -28,11 +33,15 @@ type FormData = {
     firstName?: string;
     language?: typeof Languages[keyof typeof Languages];
     freeText?: string;
+    date?: string;
+    time?: string;
 };
 
 const NewScreen: React.FC<Props> = ({ route, navigation }) => {
     const { id } = route.params;
     const formData = useStorage(id);
+    const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
+    const [isTimePickerVisible, setTimePickerVisibility] = useState(false);
 
     console.log(`formData: ${JSON.stringify(formData)}`);
 
@@ -62,13 +71,33 @@ const NewScreen: React.FC<Props> = ({ route, navigation }) => {
         e: NativeSyntheticEvent<TextInputFocusEventData>,
         formKey: keyof FormData,
     ) => {
-        const savedData = { [formKey]: e.nativeEvent.text };
+        console.log("nativeEvent", e.nativeEvent);
+        updateFormStorageData(e.nativeEvent.text, formKey);
+    };
+
+    const updateFormStorageData = (
+        itemValue: string,
+        formKey: keyof FormData,
+    ) => {
+        const savedData = { [formKey]: itemValue };
+        console.log("saved!", id, savedData);
         updateStorageData(id, savedData);
     };
 
-    const handleChangeSelect = (itemValue: string, formKey: keyof FormData) => {
-        const savedData = { [formKey]: itemValue };
-        updateStorageData(id, savedData);
+    const showDatePicker = () => {
+        setDatePickerVisibility(true);
+    };
+
+    const hideDatePicker = () => {
+        setDatePickerVisibility(false);
+    };
+
+    const showTimePicker = () => {
+        setTimePickerVisibility(true);
+    };
+
+    const hideTimePicker = () => {
+        setTimePickerVisibility(false);
     };
 
     console.log("errors", errors);
@@ -117,7 +146,10 @@ const NewScreen: React.FC<Props> = ({ route, navigation }) => {
                                 accessibilityLabel="Select your favorite programming language"
                                 placeholder="Select your favorite programming language"
                                 onValueChange={(itemValue) => {
-                                    handleChangeSelect(itemValue, "language");
+                                    updateFormStorageData(
+                                        itemValue,
+                                        "language",
+                                    );
                                     onChange(itemValue);
                                 }}
                                 _selectedItem={{
@@ -172,6 +204,134 @@ const NewScreen: React.FC<Props> = ({ route, navigation }) => {
                         rules={{ required: true }}
                     />
                     {errors.freeText && (
+                        <FormControl.ErrorMessage>
+                            これは必須です
+                        </FormControl.ErrorMessage>
+                    )}
+                </FormControl>
+
+                <FormControl isRequired isInvalid={"date" in errors}>
+                    <FormControl.Label>日付</FormControl.Label>
+
+                    <Controller
+                        control={control}
+                        render={({ field: { onChange, value } }) => (
+                            <>
+                                <Pressable onPress={showDatePicker}>
+                                    {/* refs: https://github.com/GeekyAnts/NativeBase/blob/master/src/theme/components/input.ts */}
+                                    <Text
+                                        borderWidth="1"
+                                        bg={errors.date && "error.100"}
+                                        borderColor={
+                                            errors.date
+                                                ? "error.500"
+                                                : "muted.300"
+                                        }
+                                        py="2"
+                                        px="3"
+                                        borderRadius="sm"
+                                        color={
+                                            value != null
+                                                ? "text.900"
+                                                : "text.400"
+                                        }>
+                                        {value != null ? value : "年/月/日"}
+                                    </Text>
+                                </Pressable>
+
+                                <DateTimePickerModal
+                                    isVisible={isDatePickerVisible}
+                                    mode="date"
+                                    locale="ja_JP"
+                                    onConfirm={(date) => {
+                                        const formatedDate = formatDate(date);
+                                        console.log(
+                                            "A date has been picked: ",
+                                            formatedDate,
+                                        );
+                                        hideDatePicker();
+                                        updateFormStorageData(
+                                            formatedDate,
+                                            "date",
+                                        );
+                                        onChange(formatedDate);
+                                    }}
+                                    onCancel={() => {
+                                        hideDatePicker();
+                                        updateFormStorageData("", "date");
+                                        onChange("");
+                                    }}
+                                />
+                            </>
+                        )}
+                        name="date"
+                        rules={{ required: true }}
+                    />
+                    {errors.date && (
+                        <FormControl.ErrorMessage>
+                            これは必須です
+                        </FormControl.ErrorMessage>
+                    )}
+                </FormControl>
+
+                <FormControl isRequired isInvalid={"time" in errors}>
+                    <FormControl.Label>時刻</FormControl.Label>
+
+                    <Controller
+                        control={control}
+                        render={({ field: { onChange, value } }) => (
+                            <>
+                                <Pressable onPress={showTimePicker}>
+                                    {/* refs: https://github.com/GeekyAnts/NativeBase/blob/master/src/theme/components/input.ts */}
+                                    <Text
+                                        borderWidth="1"
+                                        bg={errors.time && "error.100"}
+                                        borderColor={
+                                            errors.time
+                                                ? "error.500"
+                                                : "muted.300"
+                                        }
+                                        py="2"
+                                        px="3"
+                                        borderRadius="sm"
+                                        color={
+                                            value != null
+                                                ? "text.900"
+                                                : "text.400"
+                                        }>
+                                        {value != null ? value : "-- : --"}
+                                    </Text>
+                                </Pressable>
+
+                                <DateTimePickerModal
+                                    isVisible={isTimePickerVisible}
+                                    mode="time"
+                                    locale="ja_JP"
+                                    onConfirm={(date) => {
+                                        const formatedTime = formatTime(date);
+                                        console.log(
+                                            "A time has been picked: ",
+                                            formatedTime,
+                                        );
+                                        hideTimePicker();
+                                        updateFormStorageData(
+                                            formatedTime,
+                                            "time",
+                                        );
+                                        onChange(formatedTime);
+                                    }}
+                                    onCancel={() => {
+                                        hideTimePicker();
+                                        updateFormStorageData("", "time");
+                                        onChange("");
+                                    }}
+                                />
+                            </>
+                        )}
+                        name="time"
+                        rules={{ required: true }}
+                    />
+                    {errors.time && (
                         <FormControl.ErrorMessage>
                             これは必須です
                         </FormControl.ErrorMessage>
