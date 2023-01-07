@@ -103,6 +103,9 @@ const NewScreen: React.FC<Props> = ({ route, navigation }) => {
         setTimePickerVisibility(false);
     };
 
+    const isValueBlank = (value: string | undefined) =>
+        value == null || value === "";
+
     console.log("errors", errors);
 
     return (
@@ -238,11 +241,13 @@ const NewScreen: React.FC<Props> = ({ route, navigation }) => {
                                         px="3"
                                         borderRadius="sm"
                                         color={
-                                            value != null
-                                                ? "text.900"
-                                                : "text.400"
+                                            isValueBlank(value)
+                                                ? "text.400"
+                                                : "text.900"
                                         }>
-                                        {value != null ? value : "年/月/日"}
+                                        {isValueBlank(value)
+                                            ? "年/月/日"
+                                            : value}
                                     </Text>
                                 </Pressable>
 
@@ -302,11 +307,13 @@ const NewScreen: React.FC<Props> = ({ route, navigation }) => {
                                         px="3"
                                         borderRadius="sm"
                                         color={
-                                            value != null
-                                                ? "text.900"
-                                                : "text.400"
+                                            isValueBlank(value)
+                                                ? "text.400"
+                                                : "text.900"
                                         }>
-                                        {value != null ? value : "-- : --"}
+                                        {isValueBlank(value)
+                                            ? "-- : --"
+                                            : value}
                                     </Text>
                                 </Pressable>
 
