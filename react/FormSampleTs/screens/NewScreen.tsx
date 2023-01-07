@@ -29,6 +29,7 @@ type Props = {
 const Languages = {
     JavaScript: "js",
     TypeScript: "ts",
+    Elixir: "elixir",
     "Invalid language": "invalid",
 } as const;
 
