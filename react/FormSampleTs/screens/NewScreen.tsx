@@ -76,12 +76,12 @@ const NewScreen: React.FC<Props> = ({ route, navigation }) => {
         formKey: keyof FormData,
     ) => {
         console.log("nativeEvent", e.nativeEvent);
-        updateFormStorageData(e.nativeEvent.text, formKey);
+        updateFormStorageData(formKey, e.nativeEvent.text);
     };
 
     const updateFormStorageData = (
-        itemValue: string,
         formKey: keyof FormData,
+        itemValue: string,
     ) => {
         const savedData = { [formKey]: itemValue };
         console.log("saved!", id, savedData);
@@ -156,8 +156,8 @@ const NewScreen: React.FC<Props> = ({ route, navigation }) => {
                                 placeholder="Select your favorite programming language"
                                 onValueChange={(itemValue) => {
                                     updateFormStorageData(
-                                        itemValue,
                                         "language",
+                                        itemValue,
                                     );
                                     onChange(itemValue);
                                 }}
@@ -264,14 +264,14 @@ const NewScreen: React.FC<Props> = ({ route, navigation }) => {
                                         );
                                         hideDatePicker();
                                         updateFormStorageData(
-                                            formatedDate,
                                             "date",
+                                            formatedDate,
                                         );
                                         onChange(formatedDate);
                                     }}
                                     onCancel={() => {
                                         hideDatePicker();
-                                        updateFormStorageData("", "date");
+                                        updateFormStorageData("date", "");
                                         onChange("");
                                     }}
                                 />
@@ -330,14 +330,14 @@ const NewScreen: React.FC<Props> = ({ route, navigation }) => {
                                         );
                                         hideTimePicker();
                                         updateFormStorageData(
-                                            formatedTime,
                                             "time",
+                                            formatedTime,
                                         );
                                         onChange(formatedTime);
                                     }}
                                     onCancel={() => {
                                         hideTimePicker();
-                                        updateFormStorageData("", "time");
+                                        updateFormStorageData("time", "");
                                         onChange("");
                                     }}
                                 />
