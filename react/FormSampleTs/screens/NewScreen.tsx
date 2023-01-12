@@ -25,6 +25,7 @@ import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { useState } from "react";
 import * as DocumentPicker from "expo-document-picker";
 import * as FileSystem from "expo-file-system";
+import uuid from "react-native-uuid";
 
 type Props = {
     route: any;
@@ -54,6 +55,36 @@ type FileInfo = {
     mimeType?: string | undefined;
 };
 
+const readBase64FileAsync = async (fileUri: string) => {
+    return await FileSystem.readAsStringAsync(fileUri, {
+        encoding: FileSystem.EncodingType.Base64,
+    });
+};
+
+const FILE_DIR = `${FileSystem.documentDirectory}/FormSampleTs/formData`;
+
+// 拡張子入れてもいいかも
+const generateFileUri = () => `${FILE_DIR}/${uuid.v4()}`;
+
+const ensureDirExists = async (dirName: string) => {
+    const dirInfo = await FileSystem.getInfoAsync(dirName);
+
+    if (!dirInfo.exists) {
+        await FileSystem.makeDirectoryAsync(dirName, { intermediates: true });
+    }
+};
+
+const writeBase64FileAsync = async (key: string, fileContent: string) => {
+    await ensureDirExists(FILE_DIR);
+    await FileSystem.writeAsStringAsync(key, fileContent);
+};
+
+const deleteFileAsync = async (fileUri: string) => {
+    await FileSystem.deleteAsync(fileUri, {
+        idempotent: true,
+    });
+};
+
 const NewScreen: React.FC<Props> = ({ route, navigation }) => {
     const { id } = route.params;
     const formData = useStorage(id);
@@ -76,12 +107,7 @@ const NewScreen: React.FC<Props> = ({ route, navigation }) => {
         console.log("submiting with: ", data);
         data.files?.forEach(async (file) => {
             try {
-                const fileContent = await FileSystem.readAsStringAsync(
-                    file.uri,
-                    {
-                        encoding: FileSystem.EncodingType.Base64,
-                    },
-                );
+                const fileContent = await readBase64FileAsync(file.uri);
                 console.log(fileContent.length);
             } catch (e) {
                 console.log(e);
@@ -94,6 +120,7 @@ const NewScreen: React.FC<Props> = ({ route, navigation }) => {
             setError("language", { type: "invalid" });
         } else {
             // アップロードに成功したらデータ削除する
+            data.files?.forEach((file) => deleteFileAsync(file.uri));
             removeStorageData(id);
             navigation.navigate("Index");
         }
@@ -149,7 +176,11 @@ const NewScreen: React.FC<Props> = ({ route, navigation }) => {
 
         const file = await DocumentPicker.getDocumentAsync();
         if (file.type === "success") {
+            const fileContent = await readBase64FileAsync(file.uri);
+            file.uri = generateFileUri();
             const newFiles = prevFiles.concat(file);
+
+            // ファイルサイズバリデーション
             const totalSize = newFiles.reduce(
                 (acc, file) => (acc += file.size ?? 0),
                 0,
@@ -160,12 +191,16 @@ const NewScreen: React.FC<Props> = ({ route, navigation }) => {
                 });
                 return;
             }
+
+            // documentDirectory に保存することで永続化できる
+            // https://docs.expo.dev/versions/latest/sdk/filesystem/#filesystemdocumentdirectory
+            writeBase64FileAsync(file.uri, fileContent);
             updateFormStorageData("files", newFiles);
             onChange(newFiles);
         }
     };
 
-    const handleFileDelete = (
+    const handleFileDelete = async (
         file: FileInfo,
         onChange: (...event: any[]) => void,
     ) => {
@@ -175,6 +210,7 @@ const NewScreen: React.FC<Props> = ({ route, navigation }) => {
         const prevFiles = getValues("files") ?? [];
         const newFiles = prevFiles.filter((f) => f.uri !== file.uri);
         updateFormStorageData("files", newFiles);
+        deleteFileAsync(file.uri);
         onChange(newFiles);
     };
 
