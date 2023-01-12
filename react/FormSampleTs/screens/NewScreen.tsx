@@ -9,6 +9,7 @@ import {
     TextArea,
     Pressable,
     Text,
+    ScrollView,
 } from "native-base";
 import { useForm, Controller } from "react-hook-form";
 import {
@@ -110,35 +111,7 @@ const NewScreen: React.FC<Props> = ({ route, navigation }) => {
     console.log("errors", errors);
 
     return (
-        <Box flex={1} alignItems="center" mt="2">
-            <VStack width="80%" space={4}>
-                <FormControl isRequired isInvalid={"firstName" in errors}>
-                    <FormControl.Label>
-                        First Name（rules でバリデーション）
-                    </FormControl.Label>
-                    <Controller
-                        control={control}
-                        render={({ field: { onChange, value } }) => (
-                            <Input
-                                bg={errors.firstName && "error.100"}
-                                borderColor={errors.firstName && "error.600"}
-                                placeholder="text"
-                                onEndEditing={(e) =>
-                                    handleForcusOut(e, "firstName")
-                                }
-                                onChangeText={onChange}
-                                value={value}
-                            />
-                        )}
-                        name="firstName"
-                        rules={{ required: true }}
-                    />
-                    {errors.firstName && (
-                        <FormControl.ErrorMessage>
-                            これは必須です
-                        </FormControl.ErrorMessage>
-                    )}
-                </FormControl>
+        <ScrollView>
 
                 <FormControl isRequired isInvalid={"language" in errors}>
                     <FormControl.Label>
@@ -353,9 +326,7 @@ const NewScreen: React.FC<Props> = ({ route, navigation }) => {
                     )}
                 </FormControl>
 
-                <Button onPress={handleSubmit(onSubmit)}>Submit</Button>
-            </VStack>
-        </Box>
+        </ScrollView>
     );
 };
 
