@@ -24,8 +24,12 @@ import { formatDate, formatTime } from "../lib/dateformat";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { useState } from "react";
 import * as DocumentPicker from "expo-document-picker";
-import * as FileSystem from "expo-file-system";
-import uuid from "react-native-uuid";
+import {
+    readBase64FileAsync,
+    generateFileUri,
+    writeBase64FileAsync,
+    deleteFileAsync,
+} from "../lib/fileutil";
 
 type Props = {
     route: any;
@@ -53,36 +57,6 @@ type FileInfo = {
     size?: number | undefined;
     uri: string;
     mimeType?: string | undefined;
-};
-
-const readBase64FileAsync = async (fileUri: string) => {
-    return await FileSystem.readAsStringAsync(fileUri, {
-        encoding: FileSystem.EncodingType.Base64,
-    });
-};
-
-const FILE_DIR = `${FileSystem.documentDirectory}/FormSampleTs/formData`;
-
-// 拡張子入れてもいいかも
-const generateFileUri = () => `${FILE_DIR}/${uuid.v4()}`;
-
-const ensureDirExists = async (dirName: string) => {
-    const dirInfo = await FileSystem.getInfoAsync(dirName);
-
-    if (!dirInfo.exists) {
-        await FileSystem.makeDirectoryAsync(dirName, { intermediates: true });
-    }
-};
-
-const writeBase64FileAsync = async (key: string, fileContent: string) => {
-    await ensureDirExists(FILE_DIR);
-    await FileSystem.writeAsStringAsync(key, fileContent);
-};
-
-const deleteFileAsync = async (fileUri: string) => {
-    await FileSystem.deleteAsync(fileUri, {
-        idempotent: true,
-    });
 };
 
 const NewScreen: React.FC<Props> = ({ route, navigation }) => {
