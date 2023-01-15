@@ -1,6 +1,8 @@
 import * as FileSystem from "expo-file-system";
 import uuid from "react-native-uuid";
 
+// documentDirectory に保存することで永続化できる
+// https://docs.expo.dev/versions/latest/sdk/filesystem/#filesystemdocumentdirectory
 const FILE_DIR = `${FileSystem.documentDirectory}/FormSampleTs/formData`;
 
 export const readBase64FileAsync = async (fileUri: string) => {
