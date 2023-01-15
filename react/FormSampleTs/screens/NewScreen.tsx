@@ -15,6 +15,7 @@ import {
 } from "native-base";
 import { useForm, Controller } from "react-hook-form";
 import {
+    Alert,
     NativeSyntheticEvent,
     TextInputEndEditingEventData,
 } from "react-native";
@@ -30,6 +31,7 @@ import {
     writeBase64FileAsync,
     deleteFileAsync,
 } from "../lib/fileutil";
+import * as ImagePicker from "expo-image-picker";
 
 type Props = {
     route: any;
@@ -50,6 +52,7 @@ type FormData = {
     date?: string;
     time?: string;
     files?: FileInfo[];
+    images?: ImageInfo[];
 };
 
 type FileInfo = {
@@ -59,11 +62,14 @@ type FileInfo = {
     mimeType?: string | undefined;
 };
 
+type ImageInfo = {};
+
 const NewScreen: React.FC<Props> = ({ route, navigation }) => {
     const { id } = route.params;
     const formData = useStorage(id);
     const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
     const [isTimePickerVisible, setTimePickerVisibility] = useState(false);
+    const [permission, requestPermission] = ImagePicker.useCameraPermissions();
 
     console.log(`formData: ${JSON.stringify(formData)}`);
 
@@ -186,6 +192,56 @@ const NewScreen: React.FC<Props> = ({ route, navigation }) => {
         updateFormStorageData("files", newFiles);
         deleteFileAsync(file.uri);
         onChange(newFiles);
+    };
+
+    const handleImageUploadButton = async () => {
+        Alert.alert(
+            "カメラ or 写真",
+            "選択してください",
+            [
+                { text: "カメラ", onPress: () => handleCameraUpload() },
+                {
+                    text: "写真",
+                    onPress: () => handlePictureUpload(),
+                },
+            ],
+            { cancelable: false },
+        );
+    };
+
+    const handlePictureUpload = async () => {
+        const result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsMultipleSelection: true,
+            quality: 1,
+            base64: true,
+            selectionLimit: 10,
+        });
+
+        if (!result.canceled) {
+            console.log(result);
+        }
+    };
+
+    const handleCameraUpload = async () => {
+        if (!permission?.granted) {
+            await requestPermission();
+        }
+        if (!permission?.granted) {
+            return;
+        }
+
+        const result = await ImagePicker.launchCameraAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsEditing: true,
+            quality: 1,
+            base64: true,
+            selectionLimit: 10,
+        });
+
+        if (!result.canceled) {
+            console.log(result);
+        }
     };
 
     console.log("errors", errors);
@@ -486,6 +542,17 @@ const NewScreen: React.FC<Props> = ({ route, navigation }) => {
                             </FormControl.ErrorMessage>
                         )}
                     </FormControl>
+
+                    <FormControl isInvalid={"images" in errors}>
+                        <FormControl.Label>写真（10つまで）</FormControl.Label>
+                        <Button
+                            onPress={() => {
+                                handleImageUploadButton();
+                            }}>
+                            Image
+                        </Button>
+                    </FormControl>
+
                     <Button onPress={handleSubmit(onSubmit)}>Submit</Button>
                 </VStack>
             </Box>
