@@ -3,7 +3,7 @@ import uuid from "react-native-uuid";
 
 // documentDirectory に保存することで永続化できる
 // https://docs.expo.dev/versions/latest/sdk/filesystem/#filesystemdocumentdirectory
-const FILE_DIR = `${FileSystem.documentDirectory}/FormSampleTs/formData`;
+const FILE_DIR = `${FileSystem.documentDirectory}FormSampleTs/formData`;
 
 export const readBase64FileAsync = async (fileUri: string) => {
     return await FileSystem.readAsStringAsync(fileUri, {
@@ -15,11 +15,25 @@ export const readBase64FileAsync = async (fileUri: string) => {
 export const generateFileUri = () => `${FILE_DIR}/${uuid.v4()}`;
 
 export const writeBase64FileAsync = async (
-    key: string,
+    uri: string,
     fileContent: string,
 ) => {
     await ensureDirExists(FILE_DIR);
-    await FileSystem.writeAsStringAsync(key, fileContent);
+    await FileSystem.writeAsStringAsync(uri, fileContent);
+};
+
+export const copyAsync = async (from: string, to: string) => {
+    await ensureDirExists(FILE_DIR);
+    await FileSystem.copyAsync({
+        from: from,
+        to: to,
+    });
+};
+
+export const getInfoAsync = async (uri: string) => {
+    return await FileSystem.getInfoAsync(uri, {
+        size: true,
+    });
 };
 
 export const deleteFileAsync = async (fileUri: string) => {

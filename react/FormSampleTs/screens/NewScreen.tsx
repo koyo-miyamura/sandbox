@@ -12,6 +12,7 @@ import {
     ScrollView,
     HStack,
     Link,
+    Image,
 } from "native-base";
 import { useForm, Controller } from "react-hook-form";
 import {
@@ -30,8 +31,11 @@ import {
     generateFileUri,
     writeBase64FileAsync,
     deleteFileAsync,
+    copyAsync,
+    getInfoAsync,
 } from "../lib/fileutil";
 import * as ImagePicker from "expo-image-picker";
+import * as Mime from "mime";
 
 type Props = {
     route: any;
@@ -57,12 +61,32 @@ type FormData = {
 
 type FileInfo = {
     name: string;
-    size?: number | undefined;
+    size?: number;
     uri: string;
-    mimeType?: string | undefined;
+    mimeType?: string;
 };
 
-type ImageInfo = {};
+type ImageInfo = {
+    size?: number;
+    uri: string;
+    mimeType?: string;
+};
+
+type uploadedImages = {
+    size?: number;
+    uriFrom: string;
+    uriTo: string;
+    mimeType?: string;
+};
+
+const ALLOWED_MIME = [
+    "image/jpeg",
+    "image/png",
+    "image/heic",
+    "image/heif",
+    "image/heif-sequence",
+    "image/heic-sequence",
+];
 
 const NewScreen: React.FC<Props> = ({ route, navigation }) => {
     const { id } = route.params;
@@ -94,6 +118,15 @@ const NewScreen: React.FC<Props> = ({ route, navigation }) => {
             }
         });
 
+        data.images?.forEach(async (image) => {
+            try {
+                const imageContent = await readBase64FileAsync(image.uri);
+                console.log(imageContent.length);
+            } catch (e) {
+                console.log(e);
+            }
+        });
+
         if (data.language == null) {
             setError("language", { type: "required" });
         } else if (data.language === Languages["Invalid language"]) {
@@ -101,6 +134,7 @@ const NewScreen: React.FC<Props> = ({ route, navigation }) => {
         } else {
             // アップロードに成功したらデータ削除する
             data.files?.forEach((file) => deleteFileAsync(file.uri));
+            data.images?.forEach((file) => deleteFileAsync(file.uri));
             removeStorageData(id);
             navigation.navigate("Index");
         }
@@ -156,8 +190,11 @@ const NewScreen: React.FC<Props> = ({ route, navigation }) => {
 
         const file = await DocumentPicker.getDocumentAsync();
         if (file.type === "success") {
+            // getDocumentAsync で取得した uri を基に base64 エンコードしたファイルデータを取得
             const fileContent = await readBase64FileAsync(file.uri);
+            // uri をローカルファイルストレージのものに差し替える
             file.uri = generateFileUri();
+
             const newFiles = prevFiles.concat(file);
 
             // ファイルサイズバリデーション
@@ -172,7 +209,7 @@ const NewScreen: React.FC<Props> = ({ route, navigation }) => {
                 return;
             }
 
-            // documentDirectory に保存することで永続化できる
+            // documentDirectory に保存することで永続化する
             // https://docs.expo.dev/versions/latest/sdk/filesystem/#filesystemdocumentdirectory
             writeBase64FileAsync(file.uri, fileContent);
             updateFormStorageData("files", newFiles);
@@ -194,36 +231,34 @@ const NewScreen: React.FC<Props> = ({ route, navigation }) => {
         onChange(newFiles);
     };
 
-    const handleImageUploadButton = async () => {
+    const handleImageUploadButton = (onChange: (...event: any[]) => void) => {
         Alert.alert(
             "カメラ or 写真",
             "選択してください",
             [
-                { text: "カメラ", onPress: () => handleCameraUpload() },
+                { text: "カメラ", onPress: () => handleCameraUpload(onChange) },
                 {
                     text: "写真",
-                    onPress: () => handlePictureUpload(),
+                    onPress: () => handlePictureUpload(onChange),
                 },
             ],
             { cancelable: false },
         );
     };
 
-    const handlePictureUpload = async () => {
-        const result = await ImagePicker.launchImageLibraryAsync({
+    const handlePictureUpload = async (onChange: (...event: any[]) => void) => {
+        const image = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
             allowsMultipleSelection: true,
             quality: 1,
-            base64: true,
-            selectionLimit: 10,
+            selectionLimit: 10, // ios14以上のみ有効
         });
 
-        if (!result.canceled) {
-            console.log(result);
-        }
+        handleUploadedImage(image, onChange);
     };
 
-    const handleCameraUpload = async () => {
+    const handleCameraUpload = async (onChange: (...event: any[]) => void) => {
+        // ここでカメラ許可のチェック
         if (!permission?.granted) {
             await requestPermission();
         }
@@ -231,17 +266,127 @@ const NewScreen: React.FC<Props> = ({ route, navigation }) => {
             return;
         }
 
-        const result = await ImagePicker.launchCameraAsync({
+        const image = await ImagePicker.launchCameraAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
             allowsEditing: true,
             quality: 1,
-            base64: true,
-            selectionLimit: 10,
+            selectionLimit: 10, // ios14以上のみ有効
         });
 
-        if (!result.canceled) {
-            console.log(result);
+        handleUploadedImage(image, onChange);
+    };
+
+    const handleUploadedImage = async (
+        image: ImagePicker.ImagePickerResult,
+        onChange: (...event: any[]) => void,
+    ) => {
+        // 自前で setError するので事前に clearErrors する
+        clearErrors("images");
+
+        if (image.canceled) {
+            return;
         }
+
+        const prevImages = getValues("images") ?? [];
+
+        // ファイル添付上限チェック
+        if (prevImages.length + image.assets.length > 10) {
+            setError("images", {
+                message: "写真は10まで添付できます",
+            });
+            return;
+        }
+
+        let uploadedImages: uploadedImages[] = [];
+        let isOverFileSizeLimit = false; // ファイル1件当たりのファイルサイズ
+        let isValidMime = true; // 拡張子チェック
+
+        // ここ Promise.all で全て終わるまで待つ必要がある
+        await Promise.all(
+            image.assets.map(async (asset) => {
+                // ファイルサイズが Android だと ImagePicker から取れないので取得
+                const info = await getInfoAsync(asset.uri);
+
+                // 1ファイルあたりのファイルサイズバリデーション
+                if (info.size && info.size > 300_000_000) {
+                    isOverFileSizeLimit = true;
+                }
+
+                // 拡張子バリデーション
+                const mimeType = Mime.getType(asset.uri) ?? "";
+                if (!ALLOWED_MIME.includes(mimeType)) {
+                    isValidMime = false;
+                }
+
+                uploadedImages.push({
+                    size: info.size,
+                    uriFrom: asset.uri,
+                    uriTo: generateFileUri(),
+                    mimeType: mimeType,
+                });
+            }),
+        );
+
+        if (isOverFileSizeLimit) {
+            setError("images", {
+                message: "1写真の最大サイズは300MBです",
+            });
+            return;
+        }
+
+        if (!isValidMime) {
+            setError("images", {
+                message: "jpg,png,heic のいずれかを添付してください",
+            });
+            return;
+        }
+
+        const newImages = prevImages.concat(
+            uploadedImages.map((i) => {
+                return {
+                    size: i.size,
+                    uri: i.uriTo,
+                    mimeType: i.mimeType,
+                };
+            }),
+        );
+
+        // 合計のファイルサイズバリデーション
+        const totalSize = newImages.reduce(
+            (acc, image) => (acc += image.size ?? 0),
+            0,
+        );
+        if (totalSize > 500_000_000) {
+            setError("images", {
+                message: "写真の合計サイズは500MBです",
+            });
+            return;
+        }
+
+        // 保存
+        // ここ Promise.all で全て終わるまで待つ必要がある
+        await Promise.all(
+            uploadedImages.map(async (image) => {
+                await copyAsync(image.uriFrom, image.uriTo);
+            }),
+        );
+
+        updateFormStorageData("images", newImages);
+        onChange(newImages);
+    };
+
+    const handleImageDelete = async (
+        image: ImageInfo,
+        onChange: (...event: any[]) => void,
+    ) => {
+        // 自前で setError するので事前に clearErrors する
+        clearErrors("images");
+
+        const prevImages = getValues("images") ?? [];
+        const newFiles = prevImages.filter((i) => i.uri !== image.uri);
+        updateFormStorageData("images", newFiles);
+        deleteFileAsync(image.uri);
+        onChange(newFiles);
     };
 
     console.log("errors", errors);
@@ -545,12 +690,55 @@ const NewScreen: React.FC<Props> = ({ route, navigation }) => {
 
                     <FormControl isInvalid={"images" in errors}>
                         <FormControl.Label>写真（10つまで）</FormControl.Label>
-                        <Button
-                            onPress={() => {
-                                handleImageUploadButton();
-                            }}>
-                            Image
-                        </Button>
+
+                        <Controller
+                            control={control}
+                            render={({ field: { onChange, value } }) => (
+                                <VStack mt={2} space="4">
+                                    <Button
+                                        onPress={() => {
+                                            handleImageUploadButton(onChange);
+                                        }}>
+                                        Image
+                                    </Button>
+
+                                    <HStack flex="1" flexWrap="wrap">
+                                        {value?.map((image, i) => {
+                                            return (
+                                                <VStack
+                                                    space="2"
+                                                    key={String(i)}
+                                                    width="25%">
+                                                    <Image
+                                                        source={{
+                                                            uri: image.uri,
+                                                        }}
+                                                        alt="alt"
+                                                        size="sm"
+                                                    />
+                                                    <Link
+                                                        onPress={() =>
+                                                            handleImageDelete(
+                                                                image,
+                                                                onChange,
+                                                            )
+                                                        }>
+                                                        削除
+                                                    </Link>
+                                                </VStack>
+                                            );
+                                        })}
+                                    </HStack>
+                                </VStack>
+                            )}
+                            name="images"
+                        />
+
+                        {errors.images && (
+                            <FormControl.ErrorMessage>
+                                {errors.images.message}
+                            </FormControl.ErrorMessage>
+                        )}
                     </FormControl>
 
                     <Button onPress={handleSubmit(onSubmit)}>Submit</Button>
