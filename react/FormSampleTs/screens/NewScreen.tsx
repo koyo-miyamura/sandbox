@@ -4,8 +4,6 @@ import {
     Button,
     FormControl,
     Box,
-    Select,
-    CheckIcon,
     TextArea,
     Pressable,
     Text,
@@ -36,7 +34,7 @@ import {
 } from "../lib/fileutil";
 import * as ImagePicker from "expo-image-picker";
 import * as Mime from "mime";
-import { Picker } from "@react-native-picker/picker";
+import RNPickerSelect from "react-native-picker-select";
 
 type Props = {
     route: any;
@@ -53,7 +51,6 @@ const Languages = {
 type FormData = {
     firstName?: string;
     language?: typeof Languages[keyof typeof Languages];
-    language2?: typeof Languages[keyof typeof Languages];
     freeText?: string;
     date?: string;
     time?: string;
@@ -433,37 +430,18 @@ const NewScreen: React.FC<Props> = ({ route, navigation }) => {
                         </FormControl.Label>
                         <Controller
                             control={control}
-                            render={({ field: { onChange, value } }) => (
-                                <Select
-                                    bg={errors.language && "error.100"}
-                                    borderColor={errors.language && "error.600"}
-                                    selectedValue={value}
-                                    minWidth={200}
-                                    accessibilityLabel="Select your favorite programming language"
-                                    placeholder="Select your favorite programming language"
-                                    onValueChange={(itemValue) => {
-                                        updateFormStorageData(
-                                            "language",
-                                            itemValue,
-                                        );
-                                        onChange(itemValue);
-                                    }}
-                                    _selectedItem={{
-                                        bg: "cyan.600",
-                                        endIcon: <CheckIcon size={4} />,
-                                    }}>
-                                    {Object.entries(Languages).map(
-                                        ([languageLabel, languageValue]) => {
-                                            return (
-                                                <Select.Item
-                                                    key={languageLabel}
-                                                    label={languageLabel}
-                                                    value={languageValue}
-                                                />
-                                            );
-                                        },
+                            render={({ field: { onChange } }) => (
+                                <RNPickerSelect
+                                    onValueChange={(itemValue) =>
+                                        onChange(itemValue)
+                                    }
+                                    items={Object.entries(Languages).map(
+                                        ([languageLabel, languageValue]) => ({
+                                            label: languageLabel,
+                                            value: languageValue,
+                                        }),
                                     )}
-                                </Select>
+                                />
                             )}
                             name="language"
                         />
@@ -473,45 +451,6 @@ const NewScreen: React.FC<Props> = ({ route, navigation }) => {
                             </FormControl.ErrorMessage>
                         )}
                         {errors.language?.type === "invalid" && (
-                            <FormControl.ErrorMessage>
-                                不正な言語です
-                            </FormControl.ErrorMessage>
-                        )}
-                    </FormControl>
-
-                    <FormControl isRequired isInvalid={"language2" in errors}>
-                        <FormControl.Label>
-                            Select Language2（バリデーションなし）
-                        </FormControl.Label>
-                        <Controller
-                            control={control}
-                            render={({ field: { onChange, value } }) => (
-                                <Picker
-                                    selectedValue={value}
-                                    onValueChange={(itemValue, _itemIndex) =>
-                                        onChange(itemValue)
-                                    }>
-                                    {Object.entries(Languages).map(
-                                        ([languageLabel, languageValue]) => {
-                                            return (
-                                                <Picker.Item
-                                                    key={languageLabel}
-                                                    label={languageLabel}
-                                                    value={languageValue}
-                                                />
-                                            );
-                                        },
-                                    )}
-                                </Picker>
-                            )}
-                            name="language2"
-                        />
-                        {errors.language2?.type === "required" && (
-                            <FormControl.ErrorMessage>
-                                これは必須です
-                            </FormControl.ErrorMessage>
-                        )}
-                        {errors.language2?.type === "invalid" && (
                             <FormControl.ErrorMessage>
                                 不正な言語です
                             </FormControl.ErrorMessage>
