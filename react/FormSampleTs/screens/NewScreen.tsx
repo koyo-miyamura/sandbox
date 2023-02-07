@@ -36,6 +36,7 @@ import {
 } from "../lib/fileutil";
 import * as ImagePicker from "expo-image-picker";
 import * as Mime from "mime";
+import { Picker } from "@react-native-picker/picker";
 
 type Props = {
     route: any;
@@ -52,6 +53,7 @@ const Languages = {
 type FormData = {
     firstName?: string;
     language?: typeof Languages[keyof typeof Languages];
+    language2?: typeof Languages[keyof typeof Languages];
     freeText?: string;
     date?: string;
     time?: string;
@@ -471,6 +473,45 @@ const NewScreen: React.FC<Props> = ({ route, navigation }) => {
                             </FormControl.ErrorMessage>
                         )}
                         {errors.language?.type === "invalid" && (
+                            <FormControl.ErrorMessage>
+                                不正な言語です
+                            </FormControl.ErrorMessage>
+                        )}
+                    </FormControl>
+
+                    <FormControl isRequired isInvalid={"language2" in errors}>
+                        <FormControl.Label>
+                            Select Language2（バリデーションなし）
+                        </FormControl.Label>
+                        <Controller
+                            control={control}
+                            render={({ field: { onChange, value } }) => (
+                                <Picker
+                                    selectedValue={value}
+                                    onValueChange={(itemValue, _itemIndex) =>
+                                        onChange(itemValue)
+                                    }>
+                                    {Object.entries(Languages).map(
+                                        ([languageLabel, languageValue]) => {
+                                            return (
+                                                <Picker.Item
+                                                    key={languageLabel}
+                                                    label={languageLabel}
+                                                    value={languageValue}
+                                                />
+                                            );
+                                        },
+                                    )}
+                                </Picker>
+                            )}
+                            name="language2"
+                        />
+                        {errors.language2?.type === "required" && (
+                            <FormControl.ErrorMessage>
+                                これは必須です
+                            </FormControl.ErrorMessage>
+                        )}
+                        {errors.language2?.type === "invalid" && (
                             <FormControl.ErrorMessage>
                                 不正な言語です
                             </FormControl.ErrorMessage>
