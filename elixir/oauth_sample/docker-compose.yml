@@ -10,6 +10,8 @@ services:
         - host_gid=${host_gid}
     environment:
       DB_HOST: db
+      GITHUB_CLIENT_ID: ${GITHUB_CLIENT_ID}
+      GITHUB_CLIENT_SECRET: ${GITHUB_CLIENT_SECRET}
     links:
       - db
     ports:

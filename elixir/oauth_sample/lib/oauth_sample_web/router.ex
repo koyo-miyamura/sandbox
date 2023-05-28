@@ -2,12 +2,17 @@ defmodule OauthSampleWeb.Router do
   use OauthSampleWeb, :router
 
   pipeline :browser do
+    # plug Ueberauth
     plug :accepts, ["html"]
     plug :fetch_session
     plug :fetch_live_flash
     plug :put_root_layout, {OauthSampleWeb.Layouts, :root}
     plug :protect_from_forgery
     plug :put_secure_browser_headers
+  end
+
+  pipeline :auth do
+    plug Ueberauth
   end
 
   pipeline :api do
@@ -18,6 +23,15 @@ defmodule OauthSampleWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :home
+  end
+
+  scope "/auth", OauthSampleWeb do
+    pipe_through [:browser, :auth]
+
+    get "/:provider", AuthController, :request
+    get "/:provider/callback", AuthController, :callback
+    post "/:provider/callback", AuthController, :callback
+    delete "/logout", AuthController, :delete
   end
 
   # Other scopes may use custom stacks.
