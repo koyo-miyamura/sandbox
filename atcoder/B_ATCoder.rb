@@ -19,3 +19,20 @@ answer = 0
 end
 
 puts answer
+
+# # より効率的な解き方
+# s = gets.chomp
+
+# answer = 0
+
+# 0.upto(s.length) do |i|
+#   (i+1).upto(s.length) do |j|
+#     tmp_s = s[i..(j-1)]
+
+#     if tmp_s.each_char.all? { _1.count("ACGT") > 0 }
+#       answer = [answer, tmp_s.length].max
+#     end
+#   end
+# end
+
+# puts answer
