@@ -34,3 +34,15 @@ config :logger, level: :warning
 
 # Initialize plugs at runtime for faster test compilation
 config :phoenix, :plug_init_mode, :runtime
+
+# NOTE: テスト用に OauthSample.Ueberauth.Strategy.Test を作成して使用
+config :ueberauth, Ueberauth,
+  providers: [
+    github:
+      {OauthSample.Ueberauth.Strategy.Test,
+       [aliased_strategy: Ueberauth.Strategy.Github, default_scope: ""]}
+  ]
+
+config :ueberauth, Ueberauth.Strategy.Github.OAuth,
+  client_id: "dummy_client_id",
+  client_secret: "dummy_client_secret"
