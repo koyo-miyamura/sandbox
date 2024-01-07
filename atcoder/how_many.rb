@@ -1,3 +1,4 @@
+# https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ITP1_7_B&lang=ja
 ## 全探索
 loop do
   n, x = gets.split(" ").map(&:to_i)
