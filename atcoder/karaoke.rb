@@ -15,3 +15,14 @@ answer = 0
 end
 
 puts answer
+
+# 別解
+# for i in 1..m
+#   for j in i..m
+#     sum = 0
+#     for k in 1..n
+#       sum += [aa[k-1][i-1], aa[k-1][j-1]].max
+#     end
+#     answer = [answer, sum].max
+#   end
+# end
