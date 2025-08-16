@@ -14,10 +14,7 @@ module SelectionSort
       end
 
       if min_index != i
-        tmp = a[i]
-
-        a[i] = a[min_index]
-        a[min_index] = tmp
+        a[i], a[min_index] = a[min_index], a[i]
       end
     end
 
