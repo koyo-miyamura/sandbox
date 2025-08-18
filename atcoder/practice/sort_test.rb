@@ -2,6 +2,7 @@ require 'minitest/autorun'
 require_relative 'bubble_sort'
 require_relative 'selection_sort'
 require_relative 'merge_sort'
+require_relative 'quick_sort'
 
 class SortTest < Minitest::Test
   def assert_sort(sort_module)
@@ -13,8 +14,9 @@ class SortTest < Minitest::Test
   end
 
   def test_sort
-    assert_sort(MergeSort)
-    assert_sort(SelectionSort)
     assert_sort(BubbleSort)
+    assert_sort(SelectionSort)
+    assert_sort(MergeSort)
+    assert_sort(QuickSort)
   end
 end
