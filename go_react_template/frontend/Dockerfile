@@ -13,7 +13,5 @@ RUN groupadd -f -g $host_gid $host_group_name \
 
 USER $host_user_name
 
-RUN pnpm install
-
 EXPOSE 5173
 CMD [ "pnpm", "dev" ]
