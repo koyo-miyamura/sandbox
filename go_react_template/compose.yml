@@ -2,7 +2,7 @@ services:
   frontend:
     build:
       context: ./frontend
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.local
       args:
         - host_user_name=${host_user_name}
         - host_group_name=${host_group_name}
