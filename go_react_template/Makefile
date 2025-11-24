@@ -2,6 +2,10 @@
 run: setup
 	docker-compose up
 
+.PHONY: frontend_exec
+frontend_exec:
+	docker-compose exec frontend bash
+
 .PHONY: setup
 setup: setup_for_docker_user
 	docker-compose run --rm frontend pnpm install
