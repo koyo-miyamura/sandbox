@@ -2,32 +2,22 @@ package repository
 
 import (
 	"backend/internal/domain"
+	_ "embed"
 	"encoding/csv"
-	"os"
-	"path/filepath"
-	"runtime"
+	"strings"
 )
 
-type CSVUserRepository struct {
-	filePath string
-}
+//go:embed data/users.csv
+var usersCSV string
+
+type CSVUserRepository struct{}
 
 func NewCSVUserRepository() *CSVUserRepository {
-	// このファイルの位置を取得
-	_, filename, _, _ := runtime.Caller(0)
-	dir := filepath.Dir(filename)
-	filePath := filepath.Join(dir, "data", "users.csv")
-	return &CSVUserRepository{filePath: filePath}
+	return &CSVUserRepository{}
 }
 
 func (r *CSVUserRepository) GetAllUsers() ([]domain.User, error) {
-	file, err := os.Open(r.filePath)
-	if err != nil {
-		return nil, err
-	}
-	defer file.Close()
-
-	reader := csv.NewReader(file)
+	reader := csv.NewReader(strings.NewReader(usersCSV))
 	records, err := reader.ReadAll()
 	if err != nil {
 		return nil, err
