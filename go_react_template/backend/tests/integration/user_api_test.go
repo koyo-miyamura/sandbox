@@ -19,7 +19,7 @@ func TestGetUsers(t *testing.T) {
 	rr := httptest.NewRecorder()
 
 	// Setup dependencies
-	repo := repository.NewCSVUserRepository("../../data/users.csv")
+	repo := repository.NewCSVUserRepository()
 	userUseCase := usecase.NewUserUseCase(repo)
 	userHandler := handler.NewUserHandler(userUseCase)
 

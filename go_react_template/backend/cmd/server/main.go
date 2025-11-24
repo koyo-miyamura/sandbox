@@ -11,7 +11,7 @@ import (
 
 func main() {
 	// Initialize repository
-	userRepo := repository.NewCSVUserRepository("data/users.csv")
+	userRepo := repository.NewCSVUserRepository()
 
 	// Initialize use case
 	userUseCase := usecase.NewUserUseCase(userRepo)

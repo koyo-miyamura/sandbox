@@ -4,13 +4,19 @@ import (
 	"backend/internal/domain"
 	"encoding/csv"
 	"os"
+	"path/filepath"
+	"runtime"
 )
 
 type CSVUserRepository struct {
 	filePath string
 }
 
-func NewCSVUserRepository(filePath string) *CSVUserRepository {
+func NewCSVUserRepository() *CSVUserRepository {
+	// このファイルの位置を取得
+	_, filename, _, _ := runtime.Caller(0)
+	dir := filepath.Dir(filename)
+	filePath := filepath.Join(dir, "data", "users.csv")
 	return &CSVUserRepository{filePath: filePath}
 }
 
