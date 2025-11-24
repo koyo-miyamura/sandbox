@@ -1,0 +1,8 @@
+openapi: 3.0.0
+info:
+  title: User API
+  description: API for managing users
+  version: 1.0.0
+paths:
+  /api/users:
+    $ref: "./paths/users.yaml"
