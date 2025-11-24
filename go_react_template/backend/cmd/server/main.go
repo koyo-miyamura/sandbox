@@ -7,28 +7,34 @@ import (
 	"backend/internal/usecase"
 	"log"
 	"net/http"
+	"os"
+	"path/filepath"
 )
 
 func main() {
-	// Initialize repository
 	userRepo := repository.NewCSVUserRepository()
-
-	// Initialize use case
 	userUseCase := usecase.NewUserUseCase(userRepo)
-
-	// Initialize handler
 	userHandler := handler.NewUserHandler(userUseCase)
 
-	// Setup routes
 	mux := http.NewServeMux()
 	mux.HandleFunc("/api/users", userHandler.GetUsers)
 
+	env := os.Getenv("ENV")
+	if env == "production" {
+		distPath := filepath.Join("..", "..", "dist")
+
+		fs := http.FileServer(http.Dir(distPath))
+		mux.Handle("/", fs)
+
+		log.Println("Serving static files from", distPath)
+	}
+
 	// Wrap with CORS middleware
-	handler := middleware.CORSMiddleware(mux)
+	handlerWithCORS := middleware.CORSMiddleware(mux)
 
 	// Start the server
 	log.Println("Starting server on :8080")
-	if err := http.ListenAndServe(":8080", handler); err != nil {
+	if err := http.ListenAndServe(":8080", handlerWithCORS); err != nil {
 		log.Fatalf("Could not start server: %s\n", err)
 	}
 }
