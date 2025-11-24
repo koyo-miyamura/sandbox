@@ -23,7 +23,8 @@ RUN go mod download
 
 COPY backend/ ./
 
-COPY --from=frontend-builder /app/frontend/dist ../frontend/dist
+RUN rm -rf ./cmd/server/dist
+COPY --from=frontend-builder /app/frontend/dist ./cmd/server/dist
 
 RUN CGO_ENABLED=0 GOOS=linux go build -o /app/server ./cmd/server/main.go
 
@@ -36,7 +37,6 @@ RUN apk --no-cache add ca-certificates && \
 WORKDIR /app
 
 COPY --from=backend-builder /app/server ./server
-COPY --from=frontend-builder /app/frontend/dist ./frontend/dist
 
 ENV ENV=production
 

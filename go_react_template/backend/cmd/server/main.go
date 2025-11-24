@@ -5,11 +5,15 @@ import (
 	"backend/internal/middleware"
 	"backend/internal/repository"
 	"backend/internal/usecase"
+	"embed"
+	"io/fs"
 	"log"
 	"net/http"
 	"os"
-	"path/filepath"
 )
+
+//go:embed all:dist
+var distFS embed.FS
 
 func main() {
 	userRepo := repository.NewCSVUserRepository()
@@ -21,12 +25,15 @@ func main() {
 
 	env := os.Getenv("ENV")
 	if env == "production" {
-		distPath := filepath.Join("..", "..", "dist")
+		distContent, err := fs.Sub(distFS, "dist")
+		if err != nil {
+			log.Fatalf("Failed to get dist subdirectory: %v", err)
+		}
 
-		fs := http.FileServer(http.Dir(distPath))
-		mux.Handle("/", fs)
+		fileServer := http.FileServer(http.FS(distContent))
+		mux.Handle("/", fileServer)
 
-		log.Println("Serving static files from", distPath)
+		log.Println("Serving embedded static files")
 	}
 
 	// Wrap with CORS middleware
