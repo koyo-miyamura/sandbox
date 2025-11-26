@@ -18,6 +18,11 @@ import (
 	"github.com/getkin/kin-openapi/openapi3"
 )
 
+// ErrorResponse defines model for ErrorResponse.
+type ErrorResponse struct {
+	Error string `json:"error"`
+}
+
 // GetUsersResponse defines model for GetUsersResponse.
 type GetUsersResponse struct {
 	Users []User `json:"users"`
@@ -188,13 +193,14 @@ func HandlerWithOptions(si ServerInterface, options StdHTTPServerOptions) http.H
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"H4sIAAAAAAAC/4RSwYrcMAz9FaP2GJJse8upA4UyPS2FPZU9qImSaIgt1/aUDkv+vchxZ5hJoScL+b2n",
-	"52e9QS/WiyOXInRvEPuZLObyC6WXSCF+o+jFRdKeD+IpJKaMOOu1FpzI5uJ9oBE6eNfcVJsi2agYrBWk",
-	"iyfoAEPAC6xrBYF+njnQAN33Ivl6RcmPE/VJaZm+s0AWecnFb7R+UcpJZlcPQp9Kq+7FwlUwpsBuUkEe",
-	"7nlP/wI5tHQP+yqzM5+F9uiHp/AAhV8Vm/tnKYfdKDpioNgH9onFQQeH56MZJRiLDid2k9mSqSBxyj40",
-	"D3N4PkIFvyjEjfVUt3WrvsWTQ8/QwcfcqsBjmnNkDXpurl83UdJDM0UdfRyg068/eH4pE0NZgIz/0LZ6",
-	"9OISuUxF7xfuM7k5RbXxd43+txG7Dct5PORgFo7JyFgCUEQ8W4vhshk1uCy3cHCKmv1m/XVd1/VPAAAA",
-	"///7AAGs4gIAAA==",
+	"H4sIAAAAAAAC/6xTwY4TMQz9lchwjDpdEJc5UQmEymkF2hPaQ5hxp64mcXDSFdVq/h05E7oqU9TLnmLF",
+	"fvbzs/0MHfvIAUNO0D5D6vboXTE/i7B8wxQ5JNSPKBxRMmFxo7qL8dv5OCK0sA0ZJbjRJJQnFDOHWMin",
+	"qO6UhcIA02RB8NeRBHtof9REj+cw/nnALsNk4Qvmh4SS/k/iqG41KKMvxlvBHbTwpnnpq6lNNZpM89ZC",
+	"TsSdFnTmlNfoFPhSB+9ovNThwPuw6hk/1q9Vx34pgwXqL3F314KC83gZ9pX3wXxivKks9VDxttJctqUY",
+	"CjvWEj2mTihm4gAtbO63ZsdivAtuoDCYWRkLmXLhoXqYzf0WLDyhpBl1t1qv1sqbIwYXCVp4X74sRJf3",
+	"RbLGRWrOoxsw66OaOi297aHV0W8iPdSKUhegxL9br/XpOGQMBepiHKkr4OaQlMbfRb61EYsNK3r8o4MZ",
+	"KWXDuyrAZOHDK1K4PLMr9c9X9X2+qgIos05H752cZrmMG8eXEbkh6QbMAj5O0zT9CQAA///lQPKn6gMA",
+	"AA==",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file
