@@ -29,10 +29,7 @@ COPY --from=frontend-builder /app/frontend/dist ./cmd/server/dist
 RUN CGO_ENABLED=0 GOOS=linux go build -o /app/server ./cmd/server/main.go
 
 # ステージ3: 実行環境
-FROM alpine:latest
-
-RUN apk --no-cache add ca-certificates && \
-  apk upgrade
+FROM gcr.io/distroless/static-debian12:nonroot
 
 WORKDIR /app
 
@@ -41,5 +38,7 @@ COPY --from=backend-builder /app/server ./server
 ENV ENV=production
 
 EXPOSE 8080
+
+USER nonroot:nonroot
 
 CMD ["./server"]
