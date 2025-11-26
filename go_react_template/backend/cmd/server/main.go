@@ -36,8 +36,12 @@ func setupHandler() http.Handler {
 	userRepo := repository.NewUserRepository()
 	userUseCase := usecase.NewUserUseCase(userRepo)
 	userHandler := handler.NewUserHandler(userUseCase)
+	fileHandler := handler.NewFileHandler()
+	swaggerHandler := handler.NewSwaggerHandler()
 	mux := router.SetupRoutes(&router.Handlers{
-		UserHandler: userHandler,
+		UserHandler:    userHandler,
+		FileHandler:    fileHandler,
+		SwaggerHandler: swaggerHandler,
 	})
 
 	return middleware.CORSMiddleware(mux)
