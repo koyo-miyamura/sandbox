@@ -17,6 +17,11 @@ setup_for_docker_user:
 	echo "host_uid=`id -u`" >> .env
 	echo "host_gid=`id -g`" >> .env
 
+.PHONY: generate_api_code
+generate_api_code:
+	docker run --rm -u $(shell id -u):$(shell id -g) -v ${PWD}/openapi:/spec redocly/cli bundle ./openapi.yaml -o ./openapi.gen.yaml
+	cd backend && go generate ./openapi
+
 .PHONY: build_all
 build_all:
 	docker build -t go-react-app .
