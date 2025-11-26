@@ -20,7 +20,8 @@ setup_for_docker_user:
 .PHONY: generate_api_code
 generate_api_code:
 	docker run --rm -u $(shell id -u):$(shell id -g) -v ${PWD}/openapi:/spec redocly/cli bundle ./openapi.yaml -o ./openapi.gen.yaml
-	cd backend && go generate ./openapi
+	docker compose run --rm backend go generate ./openapi
+	docker compose run --rm frontend pnpm	run gen:openapi
 
 .PHONY: build_all
 build_all:
