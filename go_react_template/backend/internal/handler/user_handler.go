@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"encoding/json"
 	"net/http"
 
 	"backend/internal/usecase"
@@ -27,7 +26,5 @@ func (h *UserHandler) GetApiUsers(w http.ResponseWriter, r *http.Request) {
 		Users: usersFromDomain(domainUsers),
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(response)
+	respondJSON(w, http.StatusOK, response)
 }
