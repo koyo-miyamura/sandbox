@@ -14,6 +14,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GetUsersResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       tags:
         - Users
 components:
@@ -43,3 +49,11 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/User'
+    ErrorResponse:
+      type: object
+      required:
+        - error
+      properties:
+        error:
+          type: string
+          example: Internal server error

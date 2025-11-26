@@ -1,0 +1,8 @@
+ErrorResponse:
+  type: object
+  required:
+    - error
+  properties:
+    error:
+      type: string
+      example: "Internal server error"
