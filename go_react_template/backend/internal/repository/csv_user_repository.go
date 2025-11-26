@@ -2,36 +2,33 @@ package repository
 
 import (
 	"backend/internal/domain"
-	_ "embed"
+	"backend/internal/embed"
 	"encoding/csv"
 	"strings"
+
+	"github.com/samber/lo"
 )
 
-//go:embed data/users.csv
-var usersCSV string
+type UserRepository struct{}
 
-type CSVUserRepository struct{}
-
-func NewCSVUserRepository() *CSVUserRepository {
-	return &CSVUserRepository{}
+func NewUserRepository() *UserRepository {
+	return &UserRepository{}
 }
 
-func (r *CSVUserRepository) GetAllUsers() ([]domain.User, error) {
-	reader := csv.NewReader(strings.NewReader(usersCSV))
+func (r *UserRepository) GetAllUsers() ([]domain.User, error) {
+	reader := csv.NewReader(strings.NewReader(embed.UsersCSV))
 	records, err := reader.ReadAll()
 	if err != nil {
 		return nil, err
 	}
 
-	var users []domain.User
-	for _, record := range records[1:] { // Skip header
-		user := domain.User{
+	users := lo.Map(records[1:], func(record []string, _ int) domain.User {
+		return domain.User{
 			ID:    record[0],
 			Name:  record[1],
 			Email: record[2],
 		}
-		users = append(users, user)
-	}
+	})
 
 	return users, nil
 }

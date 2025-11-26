@@ -4,42 +4,41 @@ import (
 	"backend/internal/handler"
 	"backend/internal/middleware"
 	"backend/internal/repository"
+	"backend/internal/router"
 	"backend/internal/usecase"
-	"embed"
-	"io/fs"
-	"log"
+	"backend/pkg/config"
+	"backend/pkg/logger"
+	"log/slog"
 	"net/http"
 	"os"
 )
 
-//go:embed all:dist
-var distFS embed.FS
-
 func main() {
-	userRepo := repository.NewCSVUserRepository()
+	logger := logger.New()
+	slog.SetDefault(logger)
+
+	cfg, err := config.LoadConfig()
+	if err != nil {
+		slog.Error("Failed to load config", "error", err)
+		os.Exit(1)
+	}
+
+	handler := setupHandler()
+
+	slog.Info("Starting server", "port", cfg.Port, "env", cfg.Env)
+	if err := http.ListenAndServe(":"+cfg.Port, handler); err != nil {
+		slog.Error("Could not start server", "error", err)
+		os.Exit(1)
+	}
+}
+
+func setupHandler() http.Handler {
+	userRepo := repository.NewUserRepository()
 	userUseCase := usecase.NewUserUseCase(userRepo)
 	userHandler := handler.NewUserHandler(userUseCase)
+	mux := router.SetupRoutes(&router.Handlers{
+		UserHandler: userHandler,
+	})
 
-	mux := http.NewServeMux()
-	mux.HandleFunc("/api/users", userHandler.GetUsers)
-
-	env := os.Getenv("ENV")
-	if env == "production" {
-		distContent, err := fs.Sub(distFS, "dist")
-		if err != nil {
-			log.Fatalf("Failed to get dist subdirectory: %v", err)
-		}
-
-		fileServer := http.FileServer(http.FS(distContent))
-		mux.Handle("/", fileServer)
-
-		log.Println("Serving embedded static files")
-	}
-
-	handlerWithCORS := middleware.CORSMiddleware(mux)
-
-	log.Println("Starting server on :8080")
-	if err := http.ListenAndServe(":8080", handlerWithCORS); err != nil {
-		log.Fatalf("Could not start server: %s\n", err)
-	}
+	return middleware.CORSMiddleware(mux)
 }

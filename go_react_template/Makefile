@@ -17,10 +17,10 @@ setup_for_docker_user:
 	echo "host_uid=`id -u`" >> .env
 	echo "host_gid=`id -g`" >> .env
 
-# Check for Dockerfile for deployment
 .PHONY: build_all
 build_all:
 	docker build -t go-react-app .
 
+.PHONY: run_image
 run_image:
 	docker run -p 8080:8080 go-react-app

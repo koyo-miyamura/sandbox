@@ -7,7 +7,7 @@ import (
 )
 
 func TestGetAllUsers(t *testing.T) {
-	repo := repository.NewCSVUserRepository()
+	repo := repository.NewUserRepository()
 	userUsecase := usecase.NewUserUseCase(repo)
 
 	users, err := userUsecase.GetAllUsers()
