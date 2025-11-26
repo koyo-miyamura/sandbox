@@ -9,6 +9,10 @@ export default defineConfig({
     port: 5173
   },
   build: {
+    target: 'esnext',
     sourcemap: false // セキュリティ都合でソースマップを無効化
+  },
+  esbuild: {
+    target: 'esnext'
   }
 })
