@@ -6,8 +6,6 @@ get:
       content:
         application/json:
           schema:
-            type: array
-            items:
-              $ref: "../schemas/user.yaml#/User"
+            $ref: "../schemas/user.yaml#/GetUsersResponse"
   tags:
     - Users

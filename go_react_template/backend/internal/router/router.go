@@ -15,7 +15,11 @@ type Handlers struct {
 
 func SetupRoutes(handlers *Handlers) http.Handler {
 	mux := http.NewServeMux()
-	mux.HandleFunc("/api/users", handlers.UserHandler.GetUsers)
+
+	// Register OpenAPI generated routes
+	handler.HandlerWithOptions(handlers.UserHandler, handler.StdHTTPServerOptions{
+		BaseRouter: mux,
+	})
 
 	config, err := config.LoadConfig()
 	if err != nil {

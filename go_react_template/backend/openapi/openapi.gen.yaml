@@ -13,22 +13,33 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/User'
+                $ref: '#/components/schemas/GetUsersResponse'
       tags:
         - Users
 components:
   schemas:
     User:
       type: object
+      required:
+        - id
+        - name
+        - email
       properties:
         id:
-          type: integer
-          example: 1
+          type: string
+          example: '1'
         name:
           type: string
           example: John Doe
         email:
           type: string
           example: john.doe@example.com
+    GetUsersResponse:
+      type: object
+      required:
+        - users
+      properties:
+        users:
+          type: array
+          items:
+            $ref: '#/components/schemas/User'

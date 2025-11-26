@@ -18,11 +18,16 @@ import (
 	"github.com/getkin/kin-openapi/openapi3"
 )
 
+// GetUsersResponse defines model for GetUsersResponse.
+type GetUsersResponse struct {
+	Users []User `json:"users"`
+}
+
 // User defines model for User.
 type User struct {
-	Email *string `json:"email,omitempty"`
-	Id    *int    `json:"id,omitempty"`
-	Name  *string `json:"name,omitempty"`
+	Email string `json:"email"`
+	Id    string `json:"id"`
+	Name  string `json:"name"`
 }
 
 // ServerInterface represents all server handlers.
@@ -183,12 +188,13 @@ func HandlerWithOptions(si ServerInterface, options StdHTTPServerOptions) http.H
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"H4sIAAAAAAAC/2RRsY7bMAz9FYHtaNhOu2lqgAJFOmXJVHTg2bTNwBIFSTlcEPjfD5R9CXI3kXjie6Te",
-	"u0EnLognnxPYG6RuIoelPSWKWkOUQDEzFZQc8lyaN3RhJrBwlsnXvdCvDao7cVBBvgZ9TTmyH2GpgPsn",
-	"3u4+wj7TSFFnPDp6Vv8rkze/hb4qLndEXs7UZVgUYj+IKvSUusghs3iwsD8ezCDROPQ4sh/NJVFMqsm5",
-	"rNHfmv3xABW8Ukwra1e3datnSSCPgcHCzwJVEDBPxZAGAzermr3BSFmLOoa6+tCDhT+U94FP28ZIKYhP",
-	"q50/2lZLJz6TL1QMYeaukJtz0jM+UtGOM7lC/B5pAAvfmkd+zRZeU5J7uIMx4nU155MpZuaUjQybGzqR",
-	"Ls5hvK5XG5znh1M4JrD/YP3H/2VZlvcAAAD//xp+3oo+AgAA",
+	"H4sIAAAAAAAC/4RSwYrcMAz9FaP2GJJse8upA4UyPS2FPZU9qImSaIgt1/aUDkv+vchxZ5hJoScL+b2n",
+	"52e9QS/WiyOXInRvEPuZLObyC6WXSCF+o+jFRdKeD+IpJKaMOOu1FpzI5uJ9oBE6eNfcVJsi2agYrBWk",
+	"iyfoAEPAC6xrBYF+njnQAN33Ivl6RcmPE/VJaZm+s0AWecnFb7R+UcpJZlcPQp9Kq+7FwlUwpsBuUkEe",
+	"7nlP/wI5tHQP+yqzM5+F9uiHp/AAhV8Vm/tnKYfdKDpioNgH9onFQQeH56MZJRiLDid2k9mSqSBxyj40",
+	"D3N4PkIFvyjEjfVUt3WrvsWTQ8/QwcfcqsBjmnNkDXpurl83UdJDM0UdfRyg068/eH4pE0NZgIz/0LZ6",
+	"9OISuUxF7xfuM7k5RbXxd43+txG7Dct5PORgFo7JyFgCUEQ8W4vhshk1uCy3cHCKmv1m/XVd1/VPAAAA",
+	"///7AAGs4gIAAA==",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file

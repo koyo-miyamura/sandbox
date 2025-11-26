@@ -23,7 +23,7 @@ func TestGetUsers(t *testing.T) {
 	userUseCase := usecase.NewUserUseCase(repo)
 	userHandler := handler.NewUserHandler(userUseCase)
 
-	handlerFunc := http.HandlerFunc(userHandler.GetUsers)
+	handlerFunc := http.HandlerFunc(userHandler.GetApiUsers)
 
 	// Serve the HTTP request
 	handlerFunc.ServeHTTP(rr, req)
