@@ -1,0 +1,6 @@
+package: handler
+generate:
+  std-http-server: true
+  models: true
+  embedded-spec: true
+output: ../internal/handler/openapi.gen.go
