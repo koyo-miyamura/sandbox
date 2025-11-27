@@ -13,7 +13,7 @@ type Handlers struct {
 	SwaggerHandler *handler.SwaggerHandler
 }
 
-func SetupRoutes(handlers *Handlers) http.Handler {
+func SetupRoutes(cfg *config.Config, handlers *Handlers) http.Handler {
 	mux := http.NewServeMux()
 
 	// Register OpenAPI generated routes
@@ -21,13 +21,7 @@ func SetupRoutes(handlers *Handlers) http.Handler {
 		BaseRouter: mux,
 	})
 
-	config, err := config.LoadConfig()
-	if err != nil {
-		slog.Error("Failed to load config", "error", err)
-		return mux
-	}
-
-	switch config.Env {
+	switch cfg.Env {
 	case "development":
 		setupDevelopmentRoutes(mux, handlers)
 	case "production":

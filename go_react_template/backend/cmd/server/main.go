@@ -8,9 +8,13 @@ import (
 	"backend/internal/usecase"
 	"backend/pkg/config"
 	"backend/pkg/logger"
+	"context"
 	"log/slog"
 	"net/http"
 	"os"
+	"os/signal"
+	"syscall"
+	"time"
 )
 
 func main() {
@@ -23,26 +27,56 @@ func main() {
 		os.Exit(1)
 	}
 
-	handler := setupHandler()
+	server := setupServer(cfg)
 
-	slog.Info("Starting server", "port", cfg.Port, "env", cfg.Env)
-	if err := http.ListenAndServe(":"+cfg.Port, handler); err != nil {
-		slog.Error("Could not start server", "error", err)
-		os.Exit(1)
-	}
+	runServer(server, cfg)
 }
 
-func setupHandler() http.Handler {
+func setupServer(cfg *config.Config) *http.Server {
 	userRepo := repository.NewUserRepository()
 	userUseCase := usecase.NewUserUseCase(userRepo)
 	userHandler := handler.NewUserHandler(userUseCase)
+
 	fileHandler := handler.NewFileHandler()
 	swaggerHandler := handler.NewSwaggerHandler()
-	mux := router.SetupRoutes(&router.Handlers{
+
+	mux := router.SetupRoutes(cfg, &router.Handlers{
 		UserHandler:    userHandler,
 		FileHandler:    fileHandler,
 		SwaggerHandler: swaggerHandler,
 	})
 
-	return middleware.CORSMiddleware(mux)
+	handler := middleware.CORSMiddleware(mux)
+
+	return &http.Server{
+		Addr:    ":" + cfg.Port,
+		Handler: handler,
+	}
+}
+
+func runServer(server *http.Server, cfg *config.Config) {
+	go func() {
+		slog.Info("Starting server", "port", cfg.Port, "env", cfg.Env)
+		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			slog.Error("Could not start server", "error", err)
+			os.Exit(1)
+		}
+	}()
+
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+
+	sig := <-quit
+	slog.Info("Received shutdown signal", "signal", sig)
+
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	slog.InfoContext(ctx, "Shutting down server...")
+	if err := server.Shutdown(ctx); err != nil {
+		slog.Error("Server forced to shutdown", "error", err)
+		os.Exit(1)
+	}
+
+	slog.InfoContext(ctx, "Server exited gracefully")
 }
