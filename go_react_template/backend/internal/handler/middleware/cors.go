@@ -5,7 +5,7 @@ import (
 	"os"
 )
 
-func CORSMiddleware(next http.Handler) http.Handler {
+func CORS(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		allowedOrigin := os.Getenv("ALLOWED_ORIGIN")
 		if allowedOrigin == "" {

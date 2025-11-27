@@ -25,5 +25,11 @@ func setupHandler(cfg *config.Config) http.Handler {
 		SwaggerHandler: swaggerHandler,
 	})
 
-	return middleware.CORSMiddleware(mux)
+	handler := middleware.CORS(mux)
+
+	if cfg.Env == "production" {
+		handler = middleware.BasicAuth(cfg.BasicAuthUser, cfg.BasicAuthPass, handler)
+	}
+
+	return handler
 }

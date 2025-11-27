@@ -7,8 +7,10 @@ import (
 )
 
 type Config struct {
-	Port string `env:"PORT,default=8080"`
-	Env  string `env:"ENV,default=development"`
+	Port          string `env:"PORT,default=8080"`
+	Env           string `env:"ENV,default=development"`
+	BasicAuthUser string `env:"BASIC_AUTH_USER,default=koyo"`
+	BasicAuthPass string `env:"BASIC_AUTH_PASS,default=miyamu"`
 }
 
 func MustLoadConfig() *Config {
