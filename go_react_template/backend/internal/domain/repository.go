@@ -1,6 +1,8 @@
 package domain
 
+import "context"
+
 // Repository defines the methods for accessing user data.
 type Repository interface {
-	GetAllUsers() ([]User, error)
+	GetAllUsers(ctx context.Context) ([]User, error)
 }

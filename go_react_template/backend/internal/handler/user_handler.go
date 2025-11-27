@@ -15,7 +15,7 @@ func NewUserHandler(userUsecase *usecase.UserUseCase) *UserHandler {
 }
 
 func (h *UserHandler) GetApiUsers(w http.ResponseWriter, r *http.Request) {
-	domainUsers, err := h.userUsecase.GetAllUsers()
+	domainUsers, err := h.userUsecase.GetAllUsers(r.Context())
 	if err != nil {
 		respondErrorWithLog(w, http.StatusInternalServerError, "Failed to retrieve users", err)
 
