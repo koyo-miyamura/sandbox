@@ -23,7 +23,7 @@ RUN go mod download
 
 COPY backend/ ./
 
-COPY --from=frontend-builder /app/frontend/dist ./internal/embed/dist
+COPY --from=frontend-builder /app/frontend/dist ./internal/infra/embed/dist
 
 RUN CGO_ENABLED=0 GOOS=linux go build -o /app/server ./cmd/server
 
