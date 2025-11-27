@@ -25,7 +25,7 @@ COPY backend/ ./
 
 COPY --from=frontend-builder /app/frontend/dist ./internal/embed/dist
 
-RUN CGO_ENABLED=0 GOOS=linux go build -o /app/server ./cmd/server/main.go
+RUN CGO_ENABLED=0 GOOS=linux go build -o /app/server ./cmd/server
 
 # ステージ3: 実行環境
 FROM gcr.io/distroless/static-debian12:nonroot
