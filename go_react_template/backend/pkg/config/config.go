@@ -1,27 +1,23 @@
 package config
 
 import (
-	"os"
+	"context"
+
+	"github.com/sethvargo/go-envconfig"
 )
 
 type Config struct {
-	Port string
-	Env  string
+	Port string `env:"PORT,default=8080"`
+	Env  string `env:"ENV,default=development"`
 }
 
-func LoadConfig() (*Config, error) {
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = "8080"
+func MustLoadConfig() *Config {
+	ctx := context.Background()
+	var cfg Config
+
+	if err := envconfig.Process(ctx, &cfg); err != nil {
+		panic(err)
 	}
 
-	env := os.Getenv("ENV")
-	if env == "" {
-		env = "development"
-	}
-
-	return &Config{
-		Port: port,
-		Env:  env,
-	}, nil
+	return &cfg
 }
