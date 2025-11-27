@@ -2,7 +2,7 @@ package integration_test
 
 import (
 	"backend/internal/handler"
-	"backend/internal/repository"
+	"backend/internal/infra/repository"
 	"backend/internal/usecase"
 	"net/http"
 	"net/http/httptest"

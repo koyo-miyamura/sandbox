@@ -1,7 +1,7 @@
 package handler
 
 import (
-	"backend/internal/embed"
+	"backend/internal/infra/embed"
 	"log/slog"
 	"net/http"
 )

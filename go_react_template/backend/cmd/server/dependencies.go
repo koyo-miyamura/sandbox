@@ -2,9 +2,9 @@ package main
 
 import (
 	"backend/internal/handler"
-	"backend/internal/middleware"
-	"backend/internal/repository"
-	"backend/internal/router"
+	"backend/internal/handler/middleware"
+	"backend/internal/handler/router"
+	"backend/internal/infra/repository"
 	"backend/internal/usecase"
 	"backend/pkg/config"
 	"net/http"

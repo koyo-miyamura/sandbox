@@ -2,7 +2,7 @@ package repository
 
 import (
 	"backend/internal/domain"
-	"backend/internal/embed"
+	"backend/internal/infra/embed"
 	"context"
 	"encoding/csv"
 	"strings"
