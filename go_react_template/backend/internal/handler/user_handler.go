@@ -7,10 +7,10 @@ import (
 )
 
 type UserHandler struct {
-	userUsecase *usecase.UserUseCase
+	userUsecase usecase.UserUseCase
 }
 
-func NewUserHandler(userUsecase *usecase.UserUseCase) *UserHandler {
+func NewUserHandler(userUsecase usecase.UserUseCase) *UserHandler {
 	return &UserHandler{userUsecase: userUsecase}
 }
 
