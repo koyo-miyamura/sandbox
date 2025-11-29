@@ -73,18 +73,30 @@ OpenAPI による API 定義駆動開発を採用しています。
 - Docker & Docker Compose
 - Make
 
-### セットアップと起動
+### セットアップ
+
+#### **Docker for Windows, Docker for Mac**
 
 ```bash
-# 初回セットアップ + 起動
-make run
+make setup_with_user
 ```
 
 このコマンドで以下が実行されます:
 
-1. Docker ユーザー設定の生成（`.env`）
+1. Docker ユーザー設定の生成（`.env`）とそれを使用する `compose.override.yml` をホームにコピー
 2. フロントエンドの依存関係インストール
-3. Docker Compose でバックエンド・フロントエンドを起動
+
+#### **Linux docker**
+
+```bash
+make setup_without_user
+```
+
+1. フロントエンドの依存関係インストール
+
+#### 起動方法
+
+- Docker Compose でバックエンド・フロントエンドを起動
 
 起動後:
 

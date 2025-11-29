@@ -2,12 +2,8 @@ services:
   frontend:
     build:
       context: ./frontend
+      target: without_user
       dockerfile: Dockerfile.local
-      args:
-        - host_user_name=${host_user_name}
-        - host_group_name=${host_group_name}
-        - host_uid=${host_uid}
-        - host_gid=${host_gid}
     environment:
       - COREPACK_ENABLE_DOWNLOAD_PROMPT=0
     volumes:
@@ -27,4 +23,4 @@ services:
     working_dir: /app
     ports:
       - "8080:8080"
-    command: go run cmd/server/main.go
+    command: go run ./cmd/server

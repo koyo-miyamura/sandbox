@@ -1,21 +1,25 @@
 .PHONY: run
-run: setup
+run:
 	docker compose up
 
 .PHONY: frontend_exec
 frontend_exec:
 	docker compose exec frontend bash
 
-.PHONY: setup
-setup: setup_for_docker_user
-	docker compose run --rm frontend pnpm install
+.PHONY: setup_without_user
+setup_without_user: setup_frontend
 
-.PHONY: setup_for_docker_user
-setup_for_docker_user:
+.PHONY: setup_with_user
+setup_with_user: setup_frontend
+	cp docker_dev/docker-compose.override.yml .
 	echo "host_user_name=${USER}" > .env
 	echo "host_group_name=${USER}" >> .env
 	echo "host_uid=`id -u`" >> .env
 	echo "host_gid=`id -g`" >> .env
+
+.PHONY: setup_frontend
+setup_frontend:
+	docker compose run --rm frontend pnpm install
 
 .PHONY: generate_api_code
 generate_api_code:
